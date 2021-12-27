@@ -1,0 +1,174 @@
+body {
+  /* SHAPE OPTIONS */
+  margin: 0 auto;
+  padding: 0;
+
+  /* FLEX OPTIONS */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 0;
+
+  /* FONT OPTIONS */
+  font-size: var(--content-fontFamily);
+  font-family: var(--default-fontFamily);
+
+  overflow: unset;
+}
+
+/* ----- HEADBAR ----- */
+.headbar-container {
+  height: max-content;
+  padding: 1em;
+
+  /* POSITION */
+  position: sticky;
+  top: 0px;
+  left: 0px;
+
+  /* DISPLAY */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  
+  /* COLORS */
+  background-color: var(--main-backgroundColor);
+  color: var(--main-fontColor);
+  
+  /* TEXT OPTIONS */
+  white-space: nowrap;
+
+  z-index: 10;
+}
+
+.headbar-title {
+  font-family: var(--title-fontFamily);
+  font-size: var(--title-fontSize);
+  font-weight: 500;
+  
+  letter-spacing: 1px;
+  
+  text-transform: uppercase;
+}
+
+.headbar-subtitle {
+  font-family: var(--subtitle-fontFamily);
+  font-size: var(--subtitle-fontSize);
+}
+
+/* IMAGE-CONTAINER */
+@media (orientation: landscape) {
+  .image-container {
+    height: 85vh;
+  }
+}
+
+@media (orientation: portrait) {
+  .image-container {
+    height: 70vh;
+  }
+}
+
+.image-container {
+  overflow: hidden;
+
+  /* BACKGROUND IMAGE */
+  background-image: url("../MEDIA/landscape_bibliotecaImage.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  /* FLEX OPTIONS */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  
+  padding: 1em;
+}
+
+
+.animated-text {
+  /* FONT OPTIONS*/
+  font-family: "Waiting for the Sunrise";
+  color: var(--quote-fontColor);
+  font-size: var(--quote-fontSize);
+  letter-spacing: .125em;
+  font-weight: 900;
+  
+  text-align: center;
+}
+
+.animated-text::after {
+  content: '|';
+  animation: blink .5s steps(2) infinite;
+}
+
+@keyframes blink {
+  to { opacity: 0;}
+}
+
+/* ----- LOGIN FORM CONTAINER ----- */
+.loginForm-container {
+  /* FLEX OPTIONS */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: center;
+  align-content: center;
+  gap: 1em;
+
+  /* FONT OPTIONS */
+  color: var(--secondary-fontColor);
+  font-size: var(--formInput-fontSize);
+
+  white-space: nowrap;
+  padding: 3em 10vw;
+}
+
+.login-title {
+  /* FONT-TITLE */
+  letter-spacing: 1px;
+  font-weight: 300;
+  align-self: center;
+
+  font-size: var(--header-fontSize);
+  color: var(--secondary-fontColor);
+}
+
+/* FOOTER */
+
+.credits-container {
+  height: max-content;
+  padding: 1em;
+
+  /* DISPLAY */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  
+  /* COLORS */
+  background-color: var(--main-backgroundColor);
+  color: var(--main-fontColor);
+  
+  /* TEXT OPTIONS */
+  white-space: nowrap;
+}
+
+.credits-title {
+  font-weight: 500;
+  font-family: var(--title-fontFamily);
+  font-size: var(--content-fontSize);
+  text-transform: uppercase;
+}
+
+.credits-subtitle {
+  font-size: var(--title-fontSize);
+  
+  font-family: var(--subtitle-fontFamily);
+}
+

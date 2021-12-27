@@ -1,0 +1,4 @@
+codTessera;nome;cognome;user_mail;dataRegistr;codFiscale;user_password;idAmministratore
+'a0a0a0a0';'Mario';'Rossi';'mario.rossi@gmail.com';'01-01-2000';'RGLYHG53P43M091N';'tmp1';2
+'b0b0b0b0';'Luigi';'Verdi';'luigi.verdi@gmail.com';'01-01-2000';'ZRDQQD76D24B678Z';'tmp2';1
+'c0c0c0c0';'Giovanni';'Giorgio';'callme.giorgio@gmail.com';'01-01-2000';'PFYCNU78D12L584X';'tmp3';1

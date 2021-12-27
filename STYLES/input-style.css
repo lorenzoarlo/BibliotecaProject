@@ -1,0 +1,258 @@
+:root {
+  --input-mainColor: var(--main-backgroundColor);
+  --input-secondaryColor: var(--secondary-backgroundColor);
+  --inputHover-fontColor: white;
+}
+
+/* TEXT INPUT */
+.txtInput-container {
+  position: relative;
+  padding: 1em 0 0 0;
+}
+
+.txtInput {
+  /* SHAPE OPTIONS */
+  width: 100%;
+  outline: none;
+  padding: .5em 0;
+  
+  border-style: solid;
+  border-width: 0 0 2px 0;
+  border-radius: 0px;
+  border-color: var(--input-mainColor);
+
+  background: transparent;
+  letter-spacing: 1px;
+
+  transition: 0.1s;
+}
+
+.txtInput::placeholder {
+  visibility: hidden;
+}
+
+:not(.txtInput:placeholder-shown), .txtInput:focus {
+  border-color: var(--input-secondaryColor);
+}
+
+.txtInput-label {
+  display: block;
+
+  position: absolute;
+  top: 1.5em;
+
+  pointer-events: none;
+  user-select: none;
+  cursor: text;
+
+  color: gray;
+
+  letter-spacing: 1px;
+  white-space: nowrap;
+  text-transform: uppercase;
+
+  transition: 0.2s;
+}
+
+:not(.txtInput:placeholder-shown) ~ .txtInput-label,
+.txtInput:focus ~ .txtInput-label {
+  /* POSITION */
+  top: 0;
+  
+  font-size: .8em;
+  color: var(--input-secondaryColor);
+  font-weight: 300;
+}
+
+/* ----- EYE TOGGLE ----- */
+.passwordVisibility-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.txtInput-passwordField {
+  padding-right: 1.5em;
+}
+
+/* ----- BUTTON ----- */
+
+.ok-button {
+  background-color: white;
+  
+  padding: 0.4em 0.3em;
+
+  border: 3px solid var(--input-secondaryColor);
+  border-radius: 10px;
+  
+  color: var(--input-secondaryColor);
+  letter-spacing: 1px;
+  
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.ok-button:hover {
+  background-color: var(--input-secondaryColor);
+  color: var(--inputHover-fontColor);
+}
+
+
+.ok-button:disabled, .ok-button:disabled:hover {
+  border-color: gray;
+  color: black;
+  background-color: var(--inputHover-fontColor);
+  cursor: not-allowed;
+}
+
+/* ----- ROUND TOGGLE ----- */
+.toggle-container {
+  position: relative;
+  overflow: hidden;
+  
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 1em;
+}
+
+.toggle {
+  display: inline-block;
+
+  position: relative;
+  width: 30px;
+  height: 17px;
+  
+  overflow: unset;
+}
+
+.original-input-checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.round-slider {
+  cursor: pointer;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: lightgray;
+  transition: 0.4s;
+
+  border-radius: 17px;
+}
+
+.round-slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.original-input-checkbox:checked + .round-slider {
+  background-color: var(--input-secondaryColor);
+}
+
+.original-input-checkbox:checked + .round-slider:before {
+  transform: translateX(12px);
+}
+
+/* ----- ERROR ALERT ----- */
+.blurred-background{
+  display: flex;
+
+  /* FLEX OPTIONS */
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  
+  /* POSITION */
+  position: absolute;
+  top: 0;
+  left: 0;
+  
+  width: 100%;
+  height: 100%;  
+  
+  z-index: 1;
+  
+  cursor: not-allowed;
+  
+  background-color: rgb(255,255,255,0.8);
+}
+
+.error-alert {
+  width: 80vw;
+  height: max-content;
+  padding: 1em;
+  
+  border-color: black !important;
+  border-style: solid;
+  border-width: 3px;
+  background-color: crimson;
+
+  display: flex;
+
+  /* FLEX OPTIONS */
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  align-content: space-between;
+
+  cursor: default;
+  overflow: hidden;
+}
+
+.alert-content {
+  justify-self: left;
+  
+  text-transform: uppercase;
+  font-family: var(--title-fontFamily);
+  font-size: var(--headers-fontSize);
+  
+  overflow-y: hidden;
+}
+
+/* IMAGE-CONTAINER */
+@media (orientation: landscape) {
+  .alert-content {
+    overflow-x: hidden;
+  }
+}
+
+@media (orientation: portrait) {
+  .alert-content {
+    overflow-x: auto;
+  }
+}
+
+.alert-button {
+  justify-self: right;
+  
+  transition: .2s;
+  cursor: pointer;
+  
+  margin: .2em;
+  
+  flex-shrink: 0;
+}
+
+.alert-button:hover {
+  color: white;
+}
+

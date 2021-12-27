@@ -1,0 +1,49 @@
+* {
+  /* BOX SHAPE */
+  box-sizing: border-box;
+  overflow-x: hidden;
+  z-index: 1;
+  
+  position: relative;
+
+  /* FONT OPTIONS */
+  font-size: inherit;
+  font-family: inherit;
+}
+/* ----- VARIABLES ----- */
+:root {
+  --main-backgroundColor: #004200;
+  --main-fontColor: white;
+  --secondary-backgroundColor: #22dc5d;
+  --secondary-fontColor: black;
+  --quote-fontColor: white;
+  
+  --title-fontFamily: "Open Sans";
+  --subtitle-fontFamily: "Dancing Script";
+  --default-fontFamily: "Poppins";
+
+  --content-fontSize: 16px;
+  --title-fontSize: max(2vw + .8rem, 12px);
+  --subtitle-fontSize: max(1.8vw + .8rem, 8px);
+  --header-fontSize: calc(1.5vw + .8rem);
+  --formInput-fontSize: calc(1vw + .8rem);
+  --quote-fontSize: max(40px, 4vw + .8rem);
+  --alert-fontSize: max(.8rem)
+}
+
+/* ----- SCROLLBAR ----- */
+::-webkit-scrollbar {
+  width: 1vw;
+}
+
+::-webkit-scrollbar-track {
+  background: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background: lightgray;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: gray;
+}

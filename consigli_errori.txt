@@ -1,0 +1,4 @@
+ALCUNI ERRORI CHE HAI FATTO :( ->
+Nel file sql non inserire linee vuote, o almeno risolvilo con un foreach
+Gli ID iniziano da 1
+Ricorda di encrypt le password
