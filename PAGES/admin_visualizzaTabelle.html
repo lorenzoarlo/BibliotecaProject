@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../STYLES/main-style.css" />
+    <link rel="stylesheet" href="../STYLES/admin_personalArea-style.css" />
+    <link rel="stylesheet" href="../STYLES/input-style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
+    <script src="../SCRIPTS/utility-class.js"></script>
+    <script src="../SCRIPTS/admin_registraX-script.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biblioteca I.T.T.S.</title>
+</head>
+<body>
+    <header class="headbar-container">
+        <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
+        <span class="headbar-subtitle">Area personale amministratore</span>
+    </header>
+    <!-- CATEGORIE -->
+    <section class="registerForm-container">
+        <span class="registerForm-title">ELENCO CATEGORIE</span>
+        <div class="txtInput-container">
+            <input type="text" id="txtSearchCategory" class="txtInput" placeholder="." autocomplete="off"/>
+            <label class="txtInput-label">Cerca in categorie</label>
+            <i class="fa fa-search inside-icon-toggle"></i>
+        </div>
+        <table class="database-table" id="categories-table">
+            <thead>
+                <tr>
+                    <td>Codice categoria</td>
+                    <td>Descrizione</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="separation-line" />
+        <!-- AUTORI -->
+        <span class="registerForm-title">ELENCO AUTORI</span>
+        <div class="txtInput-container">
+            <input type="text" id="txtSearchCategory" class="txtInput" placeholder="." autocomplete="off"/>
+            <label class="txtInput-label">Cerca in autori</label>
+            <i class="fa fa-search inside-icon-toggle"></i>
+        </div>
+        <table class="database-table" id="authors-table">
+            <thead>
+                <tr>
+                    <td>Codice autore</td>
+                    <td>Nome e cognome</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="separation-line" />
+        <!-- UTENTI -->
+        <span class="registerForm-title">ELENCO UTENTI</span>
+        <div class="txtInput-container">
+            <input type="text" id="txtSearchCategory" class="txtInput" placeholder="." autocomplete="off"/>
+            <label class="txtInput-label">Cerca in utenti</label>
+            <i class="fa fa-search inside-icon-toggle"></i>
+        </div>
+        <table class="database-table" id="users-table">
+            <thead>
+                <tr>
+                    <td>Codice tessera</td>
+                    <td>Nome e cognome</td>
+                    <td>Mail</td>
+                    <td>Codice fiscale</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="separation-line">
+        <!-- LIBRI -->
+        <span class="registerForm-title">ELENCO LIBRI</span>
+        <div class="txtInput-container">
+            <input type="text" id="txtSearchCategory" class="txtInput" placeholder="." autocomplete="off"/>
+            <label class="txtInput-label">Cerca in libri</label>
+            <i class="fa fa-search inside-icon-toggle"></i>
+        </div>
+        <table class="database-table" id="books-table">
+            <thead>
+                <tr>
+                    <td>N° inventario</td>
+                    <td>Titolo</td>
+                    <td>Codice autore</td>
+                    <td>Codice categoria</td>
+                    <td>N° scaffale</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr class="separation-line">
+        <!-- PRESTITI -->
+        <span class="registerForm-title">ELENCO PRESTITI</span>
+        <div class="txtInput-container">
+            <input type="text" id="txtSearchCategory" class="txtInput" placeholder="." autocomplete="off"/>
+            <label class="txtInput-label">Cerca in libri</label>
+            <i class="fa fa-search inside-icon-toggle"></i>
+        </div>
+        <table class="database-table" id="lends-table">
+            <thead>
+                <tr>
+                    <td>Tessera utente</td>
+                    <td>N° inventario libro</td>
+                    <td>Titolo</td>
+                    <td>Inizio Prestito</td>
+                    <td>Fine prestito</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                    <td>ciao</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</body>
+</html>

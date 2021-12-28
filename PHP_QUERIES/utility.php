@@ -70,6 +70,16 @@
         return $result->num_rows == 0;
     }
 
+    function isNewCodAutore($connection, $cod) {
+        $q = "SELECT autori.codAutore
+        FROM autori
+        WHERE codAutore = '$cod';";
+
+        $result = $connection->query($q);
+
+        return $result->num_rows == 0;
+
+    }
 
     function generateSecurePassword($name) {
         return $name;

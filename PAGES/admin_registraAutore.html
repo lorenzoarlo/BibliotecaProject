@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
     <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
     <script src="../SCRIPTS/utility-class.js"></script>
-    <script src="../SCRIPTS/admin_registraUtente-script.js"></script>
+    <script src="../SCRIPTS/admin_registraX-script.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Biblioteca I.T.T.S.</title>
 </head>
@@ -21,30 +21,33 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <form onsubmit="do_register_utente(event)">
+    <form onsubmit="do_register_autore(event)">
         <section class="registerForm-container">
-            <span class="registerForm-title">REGISTRA UN NUOVO UTENTE</span>
+            <span class="registerForm-title">REGISTRA AUTORE</span>
             <div class="txtInput-container">
-                <input type="text" id="txtName" class="txtInput" placeholder="." autocomplete="off"
+                <input type="text" id="txtNome" class="txtInput" placeholder="." autocomplete="off"
                     required="required" />
                 <label class="txtInput-label">Nome</label>
             </div>
             <div class="txtInput-container">
-                <input type="text" id="txtSurname" class="txtInput" placeholder="." autocomplete="off"
+                <input type="text" id="txtCognome" class="txtInput" placeholder="." autocomplete="off"
                     required="required" />
                 <label class="txtInput-label">Cognome</label>
             </div>
             <div class="txtInput-container">
-                <input type="text" id="txtMail" class="txtInput" placeholder="." autocomplete="off"
+                <input type="text" id="txtCodAutore" class="txtInput" placeholder="." autocomplete="off"
                     required="required" />
-                <label class="txtInput-label">Mail</label>
+                <label class="txtInput-label">Codice autore</label>
             </div>
             <div class="txtInput-container">
-                <input type="text" id="txtCodiceFiscale" class="txtInput" placeholder="." autocomplete="off"
-                    required="required" />
-                <label class="txtInput-label">Codice fiscale</label>
+                <input type="text" id="txtAnnoNascita" class="txtInput" placeholder="." autocomplete="off" />
+                <label class="txtInput-label">Anno di nascita</label>
             </div>
-            <button type="submit" class="ok-button">REGISTRA</button>
+            <div class="txtInput-container">
+                <input type="text" id="txtBiografia" class="txtInput" placeholder="." autocomplete="off" />
+                <label class="txtInput-label">Biografia</label>
+            </div>
+            <button type="submit" class="ok-button">INSERISCI</button>
         </section>
     </form>
 </body>

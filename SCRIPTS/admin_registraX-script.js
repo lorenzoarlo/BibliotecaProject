@@ -38,7 +38,7 @@ function do_register_amministratore(e) {
         });
 }
 
-function do_register_user(e) {
+function do_register_utente(e) {
     e.preventDefault();
     let submitter = e.srcElement;
 
@@ -125,6 +125,55 @@ function do_register_categoria(e) {
                 return;
             }
             Utility.Summon_SuccessAlert(alertParentElement, "Categoria creata con successo!")
+        })
+        .catch(error => {
+            Utility.Summon_ErrorAlert(alertParentElement, "Errore di connessione!");  
+        })
+        .finally(function() {
+            submitter.disabled = false;
+        });
+}
+
+function do_register_autore(e) {
+    e.preventDefault();
+    let submitter = e.srcElement;
+
+    let toSend = new FormData();
+
+    let session_data = Utility.GetSession();
+
+    let nome = document.querySelector("#txtNome").value;
+    let cognome = document.querySelector("#txtCognome").value;
+    let codAutore = document.querySelector("#txtCodAutore").value;
+    let annoNascita = document.querySelector("#txtAnnoNascita").value;
+    let biografia = document.querySelector("#txtBiografia").value;
+
+    toSend.append("admin_username", session_data.username);
+    toSend.append("admin_password", session_data.password);
+    toSend.append("newAutore_nome", nome);
+    toSend.append("newAutore_cognome", cognome);
+    toSend.append("newAutore_codAutore", codAutore);
+    toSend.append("newAutore_annoNascita", annoNascita);
+    toSend.append("newAutore_biografia", biografia);
+
+    submitter.disabled = true;
+
+    let alertParentElement = document.querySelector(".registerForm-container");
+
+    fetch("../PHP_QUERIES/doRegisterAutore.php", { method: "POST", body: toSend })
+        .then((response) => response.text())
+        .then(function (response) {
+            console.log(response);
+            let output = JSON.parse(response);
+            if (!output["authentication"]) {
+                Utility.Summon_ErrorAlert(alertParentElement, "Amministratore non identificato!");  
+                return;
+            }
+            if (!output["newCodAutore"]) {
+                Utility.Summon_ErrorAlert(alertParentElement, "Codice autore già presente!");  
+                return;
+            }
+            Utility.Summon_SuccessAlert(alertParentElement, "Autore creato con successo!")
         })
         .catch(error => {
             Utility.Summon_ErrorAlert(alertParentElement, "Errore di connessione!");  
