@@ -55,7 +55,11 @@
         foreach(explode(';', $file[$i]) as $key => $value) {
             if($key == 4) {
                 $q = $q . "STR_TO_DATE(" . $value . ", '%d-%m-%Y'),";
-            }else{
+            }
+            // else if($key == 8){
+            //     continue;
+            // }
+            else{
                 $q = $q . $value . ",";
             }
         }

@@ -5,10 +5,15 @@
 
 
     $login_username = $_POST["username"];
-    $login_password = $_POST["password"];
+    $login_password = hash("sha256", $_POST["password"], false);
 
     include("databaseAccess.php");
-
+    
+    $response = array(
+        "authentication" => false,
+        "user-type" => null
+    );
+    
     // SEARCH IN amministratori
     $qAdmin = "SELECT amministratori.admin_mail, amministratori.admin_password 
     FROM amministratori 
@@ -16,10 +21,6 @@
     
     $resultAdmin = $connection->query($qAdmin);
 
-    $response = array(
-        "authentication" => false,
-        "user-type" => null
-    );
 
     // EMAIL CORRISPONDE IN amministratori
     if($resultAdmin->num_rows > 0) {

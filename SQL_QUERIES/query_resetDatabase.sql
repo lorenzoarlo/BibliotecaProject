@@ -12,18 +12,20 @@ CREATE OR REPLACE TABLE biblioteca.Autori(
 );
 CREATE OR REPLACE TABLE biblioteca.Amministratori(
 	idAmministratore int AUTO_INCREMENT PRIMARY KEY,
-    admin_mail varchar(32) NOT NULL,
-    admin_password varchar(64) NOT NULL
+    admin_mail varchar(32) NOT NULL UNIQUE,
+    admin_password varchar(64) NOT NULL,
+    pwd_in_chiaro varchar(16) NOT NULL
 );
 CREATE OR REPLACE TABLE biblioteca.Utenti(
 	codTessera varchar(8) PRIMARY KEY,
     nome varchar(16) NOT NULL,
     cognome varchar(16) NOT NULL,
-    user_mail varchar(32) NOT NULL,
+    user_mail varchar(32) NOT NULL UNIQUE,
     dataRegistr datetime NOT NULL,
-    codFiscale varchar(16) NOT NULL,
+    codFiscale varchar(16) NOT NULL UNIQUE,
     user_password varchar(64) NOT NULL,
     idAmministratore int NOT NULL,
+    pwd_in_chiaro varchar(32) NOT NULL,
     CONSTRAINT FOREIGN KEY(`idAmministratore`) REFERENCES `Amministratori`(`idAmministratore`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 CREATE OR REPLACE TABLE biblioteca.Libri(

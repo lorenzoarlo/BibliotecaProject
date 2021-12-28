@@ -25,12 +25,40 @@ class Utility {
         parentElement.appendChild(blurredBg);
     }
 
+    static Summon_SuccessAlert(parentElement, message) {
+        let blurredBg = document.createElement("div");
+        blurredBg.className = "blurred-background";
+        
+        let alert = document.createElement("div");
+        alert.className = "success-alert";
+
+        let alertContent = document.createElement("span");
+        alertContent.className = "alert-content";
+        alertContent.innerText = message;
+        alertContent.title = message;
+
+        
+        let btn_closeAlert = document.createElement("span");
+        btn_closeAlert.className = "alert-button";
+        btn_closeAlert.innerHTML = '&times;';
+        btn_closeAlert.addEventListener("click", () => {
+            parentElement.removeChild(blurredBg);
+        })
+
+        alert.appendChild(alertContent);
+        alert.appendChild(btn_closeAlert);
+        blurredBg.appendChild(alert);
+        parentElement.appendChild(blurredBg);
+    }
+
     static changeTxt_visibility(e, inputID) {
         let txt = document.querySelector(`#${inputID}`);
         let tipo = txt.type == "password" ? "text" : "password";
         e.srcElement.classList.toggle("fa-eye-slash");
         txt.setAttribute("type", tipo);
     }
+
+    static waitFor = time => new Promise(resolve => setTimeout(resolve, time));
 
     static async write_typewriting(element, finalText, typingSpeed, loop = false, delay = 0) {
         return new Promise(async resolve => {
@@ -57,9 +85,6 @@ class Utility {
         });
     }
 
-    static waitFor = time => new Promise(resolve => setTimeout(resolve, time));
-
-
     static writeWords_typewriting(element, words, typingSpeed, stillTime, erasingSpeed) {
         return new Promise(async resolve => {
             for(let i = 0; i < words.length; i++) {
@@ -72,5 +97,19 @@ class Utility {
         });
     }
 
+    static SetSession(username, password) {
+        sessionStorage.setItem("session-username", username);
+        sessionStorage.setItem("session-password", password);
+    }
+
+    static GetSession() {
+        let session_username = sessionStorage.getItem("session-username");
+        let session_password = sessionStorage.getItem("session-password");
+        return {username: session_username, password: session_password};
+    }
+
+    static ReindirizzaTo(newURL) {
+        window.location.href = newURL;
+    }
 
 }

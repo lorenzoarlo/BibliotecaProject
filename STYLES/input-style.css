@@ -218,6 +218,29 @@
   overflow: hidden;
 }
 
+.success-alert {
+  width: 80vw;
+  height: max-content;
+  padding: 1em;
+  
+  border-color: black !important;
+  border-style: solid;
+  border-width: 3px;
+  background-color: var(--input-secondaryColor);
+
+  display: flex;
+
+  /* FLEX OPTIONS */
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  align-content: space-between;
+
+  cursor: default;
+  overflow: hidden;
+}
+
 .alert-content {
   justify-self: left;
   

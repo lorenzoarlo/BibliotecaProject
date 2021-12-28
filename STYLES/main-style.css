@@ -47,3 +47,64 @@
 ::-webkit-scrollbar-thumb:hover {
   background: gray;
 }
+
+/* ----- DEFAULT BODY ----- */
+body {
+  /* SHAPE OPTIONS */
+  margin: 0 auto;
+  padding: 0;
+
+  /* FLEX OPTIONS */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 0;
+
+  /* FONT OPTIONS */
+  font-size: var(--content-fontFamily);
+  font-family: var(--default-fontFamily);
+
+  overflow: unset;
+}
+
+/* ----- HEADBAR ----- */
+.headbar-container {
+  height: max-content;
+  padding: 1em;
+
+  /* POSITION */
+  position: sticky;
+  top: 0px;
+  left: 0px;
+
+  /* DISPLAY */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  
+  /* COLORS */
+  background-color: var(--main-backgroundColor);
+  color: var(--main-fontColor);
+  
+  /* TEXT OPTIONS */
+  white-space: nowrap;
+
+  z-index: 10;
+}
+
+.headbar-title {
+  font-family: var(--title-fontFamily);
+  font-size: var(--title-fontSize);
+  font-weight: 500;
+  
+  letter-spacing: 1px;
+  
+  text-transform: uppercase;
+}
+
+.headbar-subtitle {
+  font-family: var(--subtitle-fontFamily);
+  font-size: var(--subtitle-fontSize);
+}

@@ -1,4 +1,4 @@
-codTessera;nome;cognome;user_mail;dataRegistr;codFiscale;user_password;idAmministratore
-'a0a0a0a0';'Mario';'Rossi';'mario.rossi@gmail.com';'01-01-2000';'RGLYHG53P43M091N';'tmp1';2
-'b0b0b0b0';'Luigi';'Verdi';'luigi.verdi@gmail.com';'01-01-2000';'ZRDQQD76D24B678Z';'tmp2';1
-'c0c0c0c0';'Giovanni';'Giorgio';'callme.giorgio@gmail.com';'01-01-2000';'PFYCNU78D12L584X';'tmp3';1
+codTessera;nome;cognome;user_mail;dataRegistr;codFiscale;user_password;idAmministratore;pwd_in_chiaro
+'a0a0a0a0';'Mario';'Rossi';'mario.rossi@gmail.com';'01-01-2000';'RGLYHG53P43M091N';'0bdcf6fc71606a300d5faa4da24f5bd204beb1248941c4187d6ee68784f40f1c';2;'tmp1'
+'b0b0b0b0';'Luigi';'Verdi';'luigi.verdi@gmail.com';'01-01-2000';'ZRDQQD76D24B678Z';'6e3cc34e3b25cdb0cf2211b484b3508ea618b075d8f9e5c99bc214ed31f54c46';1;'tmp2'
+'c0c0c0c0';'Giovanni';'Giorgio';'callme.giorgio@gmail.com';'01-01-2000';'PFYCNU78D12L584X';'005b4c6b40d7804901fc9b4f0db383a2dab106aff5cd2a050a07c114fd894a28';1;'tmp3'
