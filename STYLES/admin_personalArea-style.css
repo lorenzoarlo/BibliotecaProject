@@ -1,0 +1,28 @@
+/* ----- REGISTRATION FORM CONTAINER ----- */
+.registerForm-container {
+    /* FLEX OPTIONS */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: center;
+    align-content: center;
+    gap: 1em;
+  
+    /* FONT OPTIONS */
+    color: var(--secondary-fontColor);
+    font-size: var(--formInput-fontSize);
+  
+    white-space: nowrap;
+    padding: 3em 10vw;
+  }
+  
+  .registerForm-title {
+    /* FONT-TITLE */
+    letter-spacing: 1px;
+    font-weight: 300;
+    align-self: center;
+  
+    font-size: var(--header-fontSize);
+    color: var(--secondary-fontColor);
+  }

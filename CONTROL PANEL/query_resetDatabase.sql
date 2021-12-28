@@ -1,7 +1,7 @@
 CREATE OR REPLACE DATABASE biblioteca CHARACTER SET = 'keybcs2' COLLATE ='keybcs2_bin';
 CREATE OR REPLACE TABLE biblioteca.Categorie(
     codCategoria varchar(4) PRIMARY KEY,
-    descrizione varchar(16) NOT NULL
+    descrizione varchar(16) NOT NULL UNIQUE
 );
 CREATE OR REPLACE TABLE biblioteca.Autori(
 	codAutore varchar(16) PRIMARY KEY,

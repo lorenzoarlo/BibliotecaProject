@@ -50,6 +50,27 @@
         return $result->num_rows == 0;
     }
 
+    function isNewCodCategoria($connection, $cod) {
+        $q = "SELECT categorie.codCategoria
+        FROM categorie
+        WHERE codCategoria = '$cod';";
+
+        $result = $connection->query($q);
+
+        return $result->num_rows == 0;
+    }
+
+    function isNewDescCategoria($connection, $desc) {
+        $q = "SELECT categorie.descrizione
+        FROM categorie
+        WHERE descrizione = '$desc';";
+
+        $result = $connection->query($q);
+
+        return $result->num_rows == 0;
+    }
+
+
     function generateSecurePassword($name) {
         return $name;
     }

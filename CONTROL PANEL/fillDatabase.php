@@ -1,5 +1,5 @@
 <?php 
-    include("databaseAccess.php");
+    include("../PHP_QUERIES/databaseAccess.php");
     // -> CATEGORIE
     $file = file('../DATA/categorie.csv');
 

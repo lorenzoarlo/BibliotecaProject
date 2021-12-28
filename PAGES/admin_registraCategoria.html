@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
     <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
     <script src="../SCRIPTS/utility-class.js"></script>
-    <script src="../SCRIPTS/admin_personalArea-script.js"></script>
+    <script src="../SCRIPTS/admin_registraX-script.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Biblioteca I.T.T.S.</title>
 </head>
@@ -21,10 +21,21 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <section class="linkList-container">
-        <button type="button" class="ok-button" onclick="Utility.ReindirizzaTo('admin_registraUtente.html')" >REGISTRA UN NUOVO UTENTE</button>
-        <button type="button" class="ok-button" onclick="Utility.ReindirizzaTo('admin_registraAmministratore.html')">REGISTRA UN NUOVO AMMINISTRATORE</button>
-        <button type="button" class="ok-button" onclick="Utility.ReindirizzaTo('admin_registraCategoria.html')">REGISTRA UNA NUOVA CATEGORIA</button>
-    </section>
+    <form onsubmit="do_register_categoria(event)">
+        <section class="registerForm-container">
+            <span class="registerForm-title">INSERISCI UNA CATEGORIA</span>
+            <div class="txtInput-container">
+                <input type="text" id="txtCodiceCat" class="txtInput" placeholder="." autocomplete="off"
+                    required="required" />
+                <label class="txtInput-label">Codice categoria</label>
+            </div>
+            <div class="txtInput-container">
+                <input type="text" id="txtDescrizioneCat" class="txtInput" placeholder="." autocomplete="off"
+                    required="required" />
+                <label class="txtInput-label">Descrizione categoria</label>
+            </div>
+            <button type="submit" class="ok-button">INSERISCI</button>
+        </section>
+    </form>
 </body>
 </html>
