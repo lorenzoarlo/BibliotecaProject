@@ -1,6 +1,6 @@
 <?php
-    include("databaseAccess.php");
-    include("utility.php");
+    include("php-createConnectionDatabase.php");
+    include("php-functionUtilities.php");
     // POSSIBLE RESPONSEs
     // -> authentication = true, false -> Admin autenticato
     // -> newMail = true, false -> If email is unique
@@ -9,7 +9,6 @@
     $admin_password = $_POST["admin_password"];
     $newAdmin_mail = $_POST["newAdmin_mail"];
     $newAdmin_passwordInChiaro = generateSecurePassword("potere");
-    $newAdmin_password = hash("sha256", $newAdmin_passwordInChiaro, false);
 
     $response = array(
         "authentication" => false,
@@ -17,27 +16,28 @@
     );
 
     // Authenticate the admin
-    $admin_info = authenticate_admin($connection, $admin_username, $admin_password);
+    $authenticatedAdmin = ;
 
-    if(!$admin_info){
+    if(!existAdmin($connection, $admin_username, $admin_password)){
         echo json_encode($response);
         query_terminate($connection);  
     }
     $response["authentication"] = true;
 
     // Check for unique mail
-    if(!isNewMail($connection, $newAdmin_mail)) {
+    if(!existMail($connection, $newAdmin_mail)) {
         echo json_encode($response);
         query_terminate($connection);
     }
     $response["newMail"] = true;
 
+    addAdmin($connection, $newAdmin_mail, $newAdmin_password);
 
-    $qCreateAdmin = "INSERT INTO amministratori 
+    $q = "INSERT INTO amministratori 
     VALUES(NULL, '$newAdmin_mail','$newAdmin_password','$newAdmin_passwordInChiaro');";
 
-    $connection->query($qCreateAdmin);
+    $connection->query($q);
     
     echo json_encode($response);
-    $connection->close();
+    query_terminate($connection);
 ?>

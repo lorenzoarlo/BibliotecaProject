@@ -1,5 +1,5 @@
 /* ----- REGISTRATION FORM CONTAINER ----- */
-.registerForm-container {
+.default-container {
     /* FLEX OPTIONS */
     display: flex;
     flex-direction: column;
@@ -15,9 +15,10 @@
   
     white-space: nowrap;
     padding: 3em 10vw;
+    
   }
   
-  .registerForm-title {
+  .default-title {
     /* FONT-TITLE */
     letter-spacing: 1px;
     font-weight: 300;

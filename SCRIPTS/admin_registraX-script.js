@@ -16,7 +16,7 @@ function do_register_amministratore(e) {
 
     let alertParentElement = document.querySelector(".registerForm-container");
 
-    fetch("../PHP_QUERIES/doRegisterAdmin.php", { method: "POST", body: toSend })
+    fetch("../PHP_QUERIES/php-insertAdmin.php", { method: "POST", body: toSend })
         .then((response) => response.text())
         .then(function (response) {
             let output = JSON.parse(response);
@@ -62,7 +62,7 @@ function do_register_utente(e) {
 
     let alertParentElement = document.querySelector(".registerForm-container");
 
-    fetch("../PHP_QUERIES/doRegisterUser.php", { method: "POST", body: toSend })
+    fetch("../PHP_QUERIES/php-insertUser.php", { method: "POST", body: toSend })
         .then((response) => response.text())
         .then(function (response) {
             let output = JSON.parse(response);
@@ -108,7 +108,7 @@ function do_register_categoria(e) {
 
     let alertParentElement = document.querySelector(".registerForm-container");
 
-    fetch("../PHP_QUERIES/doRegisterCategoria.php", { method: "POST", body: toSend })
+    fetch("../PHP_QUERIES/php-insertCategory.php", { method: "POST", body: toSend })
         .then((response) => response.text())
         .then(function (response) {
             let output = JSON.parse(response);
@@ -160,7 +160,7 @@ function do_register_autore(e) {
 
     let alertParentElement = document.querySelector(".registerForm-container");
 
-    fetch("../PHP_QUERIES/doRegisterAutore.php", { method: "POST", body: toSend })
+    fetch("../PHP_QUERIES/php-insertAuthor.php", { method: "POST", body: toSend })
         .then((response) => response.text())
         .then(function (response) {
             console.log(response);

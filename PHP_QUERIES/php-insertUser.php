@@ -1,6 +1,6 @@
 <?php
-    include("databaseAccess.php");
-    include("utility.php");
+    include("php-createConnectionDatabase.php");
+    include("php-functionUtilities.php");
     // POSSIBLE RESPONSEs
     // -> authentication = true, false -> Admin autenticato
     // -> newMail = true, false -> If email is unique
@@ -13,7 +13,6 @@
     $newUser_mail = $_POST["newUser_mail"];
     $newUser_codiceFiscale = $_POST["newUser_codiceFiscale"];
     $newUser_passwordInChiaro = generateSecurePassword($newUser_name);
-    $newUser_password = hash("sha256", $newUser_passwordInChiaro, false);
     $newUser_registerDate = date("d-m-Y");
 
     $response = array(
@@ -23,7 +22,7 @@
     );
 
     // Authenticate the admin
-    $admin_info = authenticate_admin($connection, $admin_username, $admin_password);
+    $admin_info = existAdmin($connection, $admin_username, $admin_password);
 
     if(!$admin_info){
         echo json_encode($response);
@@ -33,14 +32,14 @@
     $idAdmin = $admin_info["idAmministratore"];
 
     // Check for unique mail
-    if(!isNewMail($connection, $newUser_mail)) {
+    if(!existMail($connection, $newUser_mail)) {
         echo json_encode($response);
         query_terminate($connection);
     }
     $response["newMail"] = true;
 
     // Check for unique CF
-    if(!isNewCodiceFiscale($connection, $newUser_codiceFiscale)) {
+    if(!existCodiceFiscale($connection, $newUser_codiceFiscale)) {
         echo json_encode($response);
         query_terminate($connection);
     }
@@ -48,11 +47,7 @@
 
     $newUser_codTessera = generateCodiceTessera($connection, $newUser_mail, $newUser_codiceFiscale);
 
-    $qCreateUser = "INSERT INTO utenti 
-    VALUES('$newUser_codTessera','$newUser_name','$newUser_surname','$newUser_mail',STR_TO_DATE('$newUser_registerDate','%d-%m-%Y'),'$newUser_codiceFiscale','$newUser_password',$idAdmin,'$newUser_passwordInChiaro');";
-
-    $connection->query($qCreateUser);
+    addUser($connection, $newUser_codTessera, $newUser_name, $newUser_surname, $newUser_mail, $newUser_registerDate, $newUser_codiceFiscale, $newUser_passwordInChiaro, $idAdmin);
     
-    echo json_encode($response);
-    $connection->close();
+    query_terminate($connection);
 ?>

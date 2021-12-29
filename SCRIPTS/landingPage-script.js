@@ -19,7 +19,7 @@ function do_login(e) {
 
     submitter.disabled = true;
 
-    fetch("../PHP_QUERIES/doLogin.php", { method: "POST", body: toSend })
+    fetch("../PHP_QUERIES/php-login.php", { method: "POST", body: toSend })
         .then((response) => response.text())
         .then(function (response) {
             let output = JSON.parse(response);

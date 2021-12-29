@@ -1,6 +1,6 @@
 <?php
-    include("databaseAccess.php");
-    include("utility.php");
+    include("php-createConnectionDatabase.php");
+    include("php-functionUtilities.php");
     // POSSIBLE RESPONSEs
     // -> authentication = true, false -> Admin autenticato
     // -> newCod = true, false -> If codCategoria is unique
@@ -18,7 +18,7 @@
     );
 
     // Authenticate the admin
-    $admin_info = authenticate_admin($connection, $admin_username, $admin_password);
+    $admin_info = existAdmin($connection, $admin_username, $admin_password);
 
     if(!$admin_info){
         echo json_encode($response);
@@ -27,24 +27,21 @@
     $response["authentication"] = true;
 
     // Check for unique codCat
-    if(!isNewCodCategoria($connection, $newCat_cod)) {
+    if(!existCodiceCategoria($connection, $newCat_cod)) {
         echo json_encode($response);
         query_terminate($connection);
     }
     $response["newCod"] = true;
 
     // Check for unique descrizione
-    if(!isNewDescCategoria($connection, $newCat_desc)) {
+    if(!existDescrizioneCategoria($connection, $newCat_desc)) {
         echo json_encode($response);
         query_terminate($connection);
     }
     $response["newDesc"] = true;
 
-    $qCreateCat = "INSERT INTO categorie 
-    VALUES('$newCat_cod', '$newCat_desc');";
-
-    $connection->query($qCreateCat);
+    addCategory($newCat_cod, $newCat_desc);
     
     echo json_encode($response);
-    $connection->close();
+    query_terminate($connection);
 ?>
