@@ -112,4 +112,11 @@ class Utility {
         window.location.href = newURL;
     }
 
+    static RemoveAllChildren(element) {
+        while (element.firstChild) element.removeChild(element.lastChild);
+    }
+
+    static ResetPaginationDatabaseTable(containerID) {
+        document.querySelector(`#${containerID} .table-navigator .result-pages`).dataset.offset = 0;
+    }
 }

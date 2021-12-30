@@ -1,4 +1,133 @@
 <?php
+    // ----- GET -----
+
+    function getUsers($connection, $searchString, $offset, $nRecords) {
+        $searchString = "%" . strtoupper($searchString) . "%";
+
+        $q = "SELECT utenti.codTessera, utenti.nome, utenti.cognome, utenti.user_mail, utenti.codFiscale, utenti.dataRegistr , utenti.idAmministratore
+        FROM utenti
+        WHERE (UPPER(codTessera) LIKE '$searchString') 
+        OR (UPPER(nome) LIKE '$searchString') 
+        OR (UPPER(cognome) LIKE '$searchString') 
+        OR (UPPER(user_mail) LIKE '$searchString')
+        OR (UPPER(codFiscale) LIKE '$searchString');";
+
+        $result = $connection->query($q);
+
+        $output = array();
+        $nRecords = ($nRecords < 0) ? $result->num_rows : $nRecords;
+
+        $iOffset = 0;
+        $inserted = 0;
+        while($row = mysqli_fetch_assoc($result)) {
+            if($iOffset < $offset) {
+                $iOffset++;
+                continue;
+            }
+            $inserted++;
+            $output[] = $row;
+            if($inserted >= $nRecords) break;
+        }
+
+        return array($result->num_rows, $output);
+    }
+
+    function getCategories($connection, $searchString, $offset, $nRecords) {
+        $searchString = "%" . strtoupper($searchString) . "%";
+
+        $q = "SELECT categorie.codCategoria, categorie.descrizione
+        FROM categorie
+        WHERE (UPPER(codCategoria) LIKE '$searchString') 
+        OR (UPPER(descrizione) LIKE '$searchString');";
+
+        $result = $connection->query($q);
+
+        $output = array();
+        $nRecords = ($nRecords < 0) ? $result->num_rows : $nRecords;
+
+        $iOffset = 0;
+        $inserted = 0;
+        while($row = mysqli_fetch_assoc($result)) {
+            if($iOffset < $offset) {
+                $iOffset++;
+                continue;
+            }
+            $inserted++;
+            $output[] = $row;
+            if($inserted >= $nRecords) break;
+        }
+
+        return array($result->num_rows, $output);
+    }
+
+    function getAuthors($connection, $searchString, $offset, $nRecords) {
+        $searchString = "%" . strtoupper($searchString) . "%";
+
+        $q = "SELECT autori.codAutore, autori.nome, autori.cognome
+        FROM autori
+        WHERE (UPPER(codAutore) LIKE '$searchString') 
+        OR (UPPER(nome) LIKE '$searchString')
+        OR (UPPER(cognome) LIKE '$searchString');";
+
+        $result = $connection->query($q);
+
+        $output = array();
+        $nRecords = ($nRecords < 0) ? $result->num_rows : $nRecords;
+
+        $iOffset = 0;
+        $inserted = 0;
+        while($row = mysqli_fetch_assoc($result)) {
+            if($iOffset < $offset) {
+                $iOffset++;
+                continue;
+            }
+            $inserted++;
+            $output[] = $row;
+            if($inserted >= $nRecords) break;
+        }
+
+        return array($result->num_rows, $output);
+    }
+
+    function getBooks($connection, $searchString, $offset, $nRecords) {
+        $searchString = "%" . strtoupper($searchString) . "%";
+
+        $q = "SELECT libri.nInventario, libri.titolo, libri.ISBN, libri.nScaffale, libri.codCategoria, libri.codAutore, categorie.descrizione, autori.nome, autori.cognome
+        FROM libri 
+        NATURAL JOIN categorie 
+        NATURAL JOIN autori
+        WHERE (CAST(nInventario as char) LIKE '$searchString') 
+        OR (UPPER(titolo) LIKE '$searchString')
+        OR (CAST(ISBN as char) LIKE '$searchString')
+        OR (CAST(nScaffale as char) LIKE '$searchString')
+        -- OR (UPPER(codCategoria) LIKE '$searchString')
+        -- OR (UPPER(codAutore) LIKE '$searchString')
+        OR (UPPER(descrizione) LIKE '$searchString')
+        OR (UPPER(nome) LIKE '$searchString')
+        OR (UPPER(cognome) LIKE '$searchString');";
+
+        $result = $connection->query($q);
+
+        $output = array();
+        $nRecords = ($nRecords < 0) ? $result->num_rows : $nRecords;
+
+        $iOffset = 0;
+        $inserted = 0;
+        while($row = mysqli_fetch_assoc($result)) {
+            if($iOffset < $offset) {
+                $iOffset++;
+                continue;
+            }
+            $inserted++;
+            $output[] = $row;
+            if($inserted >= $nRecords) break;
+        }
+
+        return array($result->num_rows, $output);
+    }
+
+
+
     // ----- ADD -----
 
     function addAdmin($connection, $username, $password) {
@@ -31,7 +160,7 @@
         $biografia = ($biografia == "") ? "NULL" : "'$biografia'";
         
         $q = "INSERT INTO autori
-        VALUES('$codAutore','$name','$surname',$annoNascita, $biografia);"
+        VALUES('$codAutore','$name','$surname',$annoNascita, $biografia);";
 
         $connection->query($q);
     }

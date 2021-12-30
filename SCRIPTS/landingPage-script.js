@@ -26,7 +26,7 @@ function do_login(e) {
             if (output["authentication"]) {
                 let newURL = (output["user-type"] == "admin") ? "admin_personalArea.html" : "user_personalArea.html";
                 Utility.SetSession(username, password);
-                window.location.href = newURL;
+                Utility.ReindirizzaTo(newURL);
             } else {
                 Utility.Summon_ErrorAlert(document.querySelector(".loginForm-container"), "Errore di autenticazione! Credenziali non corrette!");
             }

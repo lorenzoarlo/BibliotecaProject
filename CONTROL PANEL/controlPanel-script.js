@@ -13,3 +13,5 @@ function fillDb_onclick() {
         .then((response) => response.text())
         .then((text) => (document.querySelector("#output").innerText += text + "\n"));
 }
+
+

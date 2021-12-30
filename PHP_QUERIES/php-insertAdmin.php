@@ -15,9 +15,6 @@
         "newMail" => false,
     );
 
-    // Authenticate the admin
-    $authenticatedAdmin = ;
-
     if(!existAdmin($connection, $admin_username, $admin_password)){
         echo json_encode($response);
         query_terminate($connection);  
@@ -32,11 +29,6 @@
     $response["newMail"] = true;
 
     addAdmin($connection, $newAdmin_mail, $newAdmin_password);
-
-    $q = "INSERT INTO amministratori 
-    VALUES(NULL, '$newAdmin_mail','$newAdmin_password','$newAdmin_passwordInChiaro');";
-
-    $connection->query($q);
     
     echo json_encode($response);
     query_terminate($connection);

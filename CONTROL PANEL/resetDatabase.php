@@ -1,5 +1,5 @@
 <?php 
-    include("../PHP_QUERIES/databaseAccess.php");
+    include("../PHP_QUERIES/php-createConnectionDatabase.php");
 
     $q = file_get_contents("query_resetDatabase.sql");
     $connection->query('SET foreign_key_checks = 0');
