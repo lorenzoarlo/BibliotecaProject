@@ -1,4 +1,11 @@
+:host {
+  display: inline-block;
+}
+
 .animated-text {
+  color: var(--fontColor);
+  font-size: var(--fontSize);
+  font-family: var(--fontFamily);
   letter-spacing: 0.125em;
   font-weight: 900;
   text-align: center;

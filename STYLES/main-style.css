@@ -20,13 +20,15 @@
   --title-fontFamily: "Open Sans";
   --subtitle-fontFamily: "Dancing Script";
   --default-fontFamily: "Poppins";
+  --quote-fontFamily: "Waiting for the sunrise";
 
   --content-fontSize: 16px;
   --title-fontSize: max(2vw + .8rem, 12px);
   --subtitle-fontSize: max(1.8vw + .8rem, 8px);
   --header-fontSize: calc(1.5vw + .8rem);
   --formInput-fontSize: calc(1vw + .8rem);
-  --alert-fontSize: max(.8rem)
+  --alert-fontSize: max(.8rem);
+  --quote-fontSize: max(40px, 4vw + .8rem);
 }
 
 /* ----- SCROLLBAR ----- */

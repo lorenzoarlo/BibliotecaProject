@@ -3,7 +3,6 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
     <link rel="stylesheet" href="../STYLES/main-style.css" />
     <link rel="stylesheet" href="../STYLES/admin_personalArea-style.css" />
     <link rel="stylesheet" href="../STYLES/input-style.css" />
@@ -12,19 +11,20 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="../SCRIPTS/utility-class.js"></script>
-    <script src="../SCRIPTS/script-getDatabaseTable.js"></script>
+    <title>Biblioteca I.T.T.S.</title>
     <script>
         this.onload = () => {
-            get_all_users('usersTable');
-            get_all_categories('categoriesTable');
-            get_all_authors('authorsTable');
-            get_all_books('booksTable');
-            get_all_loans('loansTable');
+            fetch("../PHP_QUERIES/php-getAllFunctions.php?x=users", { method: "POST", body: new FormData() })
+        .then((response) => response.text())
+        .then(function (response) {
+            console.log(response);
+        });
+
         }
     </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Biblioteca I.T.T.S.</title>
 </head>
 <body>
     <header class="headbar-container">
@@ -32,7 +32,11 @@
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
     <section class="default-container">
-        <div class="table-container" id="categoriesTable">
+        <database-table title="Elenco utenti" textbox-placeholder="Cerca in utenti">
+            <database-column>NOME</database-column>
+            <database-column>NOME</database-column>
+        </database-table>
+        <!-- <div class="table-container" id="categoriesTable">
             <span class="default-title">ELENCO CATEGORIE</span>
             <div class="txtInput-container">
                 <input type="text" class="txtInput" placeholder="." autocomplete="off"/>
@@ -135,7 +139,6 @@
                         <td>ISBN</td>
                         <td>CATEGORIA</td>
                         <td>AUTORE</td>
-                        <!-- <td>CODICE AUTORE</td> -->
                         <td>N° SCAFFALE</td>
                     </tr>
                 </thead>
@@ -175,8 +178,10 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
-        
+        </div> -->
     </section>
+
+    <script src="../SCRIPTS/TextInput.js"></script>
+    <script src="../SCRIPTS/DatabaseTable.js"></script>
 </body>
 </html>

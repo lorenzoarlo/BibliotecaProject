@@ -8,12 +8,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
     <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="../SCRIPTS/TextInput.js"></script>
-    <script src="../SCRIPTS/TypewritingText.js"></script>
     <script src="../SCRIPTS/utility-class.js"></script>
     <title>Biblioteca I.T.T.S.</title>
 </head>
@@ -23,22 +22,27 @@
         <span class="headbar-subtitle">Biblioteca</span>
     </header>
     <section class="image-container">
-        <typewriting-text font-family="Waiting for the sunrise" font-color="white" font-size="max(40px, 4vw + .8rem)">
-            <word>"Inserire una citazione commovente :)"</word>
+        <typewriting-text class="quote-inside-image">
+            <word>"Inserire una citazione commovente ;)"</word>
         </typewriting-text>
     </section>
-    <form onsubmit="Utility.do_login(event)">
-        <section class="loginForm-container">
-            <span class="login-title">ACCEDI ALLA TUA AREA PERSONALE</span>
-            <text-input type="text" placeholder="E-mail o codice tessera" id="txtUsername"></text-input>
-            <text-input type="password" placeholder="Password" id="txtPassword"></text-input>
-            <button type="submit" class="ok-button">LOGIN</button>
-        </section>
-    </form>
+    <section class="loginForm-container">
+        <span class="login-title">ACCEDI ALLA TUA AREA PERSONALE</span>
+        <text-input type="text" placeholder="E-mail o codice tessera" id="txtUsername"></text-input>
+        <text-input type="password" placeholder="Password" id="txtPassword"></text-input>
+        <button type="submit" class="ok-button" onclick="Utility.do_login(event)">LOGIN</button>
+    </section>
     <!-- <section class="rules-container"></section> -->
     <footer class="credits-container">
         <span class="credits-title">All right are reserved</span>
-        <span class="credits-subtitle animated-text"></span>
+        <typewriting-text class="credits-subtitle" still-time="1000" erasing-speed="150" >
+            <word>Arlotti Lorenzo</word>
+            <word>Graziotin Nicola</word>
+            <word>Marcatelli Francesco</word>
+        </typewriting-text>
     </footer>
+
+    <script src="../SCRIPTS/TextInput.js"></script>
+    <script src="../SCRIPTS/TypewritingText.js"></script>
 </body>
 </html>

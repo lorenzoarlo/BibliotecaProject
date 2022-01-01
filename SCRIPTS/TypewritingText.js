@@ -10,8 +10,6 @@
 // ----- CHILDRENS
 // -> <word>Parola</word>
 
-// ----- 
-
 class TypewritingText extends HTMLElement {
 
     static DEFAULT_TYPING_SPEED = 0.15 * 1000;
@@ -23,7 +21,7 @@ class TypewritingText extends HTMLElement {
         super();
 
         this.attachShadow({mode: 'open'});
-
+        
         let styleElement = document.createElement("link");
         styleElement.href = "../STYLES/TypewritingText-style.css";
         styleElement.rel = "stylesheet";
@@ -33,10 +31,13 @@ class TypewritingText extends HTMLElement {
         this.span.className = "animated-text";
         this.shadowRoot.appendChild(this.span);
 
-        this.words = ["Waiting for sunrise"];
+        this.words = [];
     }
 
     connectedCallback() {
+        Array.from(this.children).filter(el => el.tagName == "WORD").forEach(wordElement => {
+            this.words.push(wordElement.innerText);
+        });
 
         // Default attributes value
         if (!this.hasAttribute("font-size")) this.setAttribute("font-size", "inherit");
@@ -46,14 +47,14 @@ class TypewritingText extends HTMLElement {
         if (!this.hasAttribute("still-time")) this.setAttribute("still-time", TypewritingText.DEFAULT_STILL_TIME);
         if (!this.hasAttribute("erasing-speed")) this.setAttribute("erasing-speed", TypewritingText.DEFAULT_ERASING_SPEED);
 
-        this.span.style.fontSize = this.getAttribute("font-size");
-        this.span.style.color = this.getAttribute("font-color");
-        this.span.style.fontFamily = this.getAttribute("font-family");
+        this.style.setProperty("--fontSize", this.getAttribute("font-size"));
+        this.style.setProperty("--fontColor", this.getAttribute("font-color"));
+        this.style.setProperty("--fontFamily", this.getAttribute("font-family"));
 
         let typingSpeed = parseFloat(this.getAttribute("typing-speed"));
         let stillTime = parseFloat(this.getAttribute("still-time"));
         let erasingSpeed = parseFloat(this.getAttribute("erasing-speed"));
-
+        
         TypewritingText.write_typewriting(this.span, this.words, typingSpeed, stillTime, erasingSpeed);
     }
 
@@ -70,10 +71,7 @@ class TypewritingText extends HTMLElement {
                 }
             }
             resolve();
-            if(stillTime != -1){
-                await TypewritingText.waitFor(stillTime);
-                TypewritingText.write_typewriting(element, words, typingSpeed, stillTime, erasingSpeed);
-            } 
+            if(stillTime != -1) TypewritingText.write_typewriting(element, words, typingSpeed, stillTime, erasingSpeed);
         });
     }
 
@@ -99,8 +97,6 @@ class TypewritingText extends HTMLElement {
     }
 
     static waitFor = time => new Promise(resolve => setTimeout(resolve, time));
-
-
 }
 
 document.currentScript.onload = () => customElements.define("typewriting-text", TypewritingText);

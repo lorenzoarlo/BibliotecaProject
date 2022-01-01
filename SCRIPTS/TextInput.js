@@ -6,7 +6,8 @@
 // -> secondary-color = color
 
 // ----- REQUIREMENTS
-// ->  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css',
+// ->  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css'
+// ->  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
 // ->  'https://fonts.googleapis.com/css?family=Poppins'
 
 class TextInput extends HTMLElement {
@@ -20,15 +21,15 @@ class TextInput extends HTMLElement {
 
         this.attachShadow({mode: 'open'});
 
-        let styleElement = document.createElement("link");
-        styleElement.href = "../STYLES/TextInput-style.css";
-        styleElement.rel = "stylesheet";
-        this.shadowRoot.appendChild(styleElement);
+        const stylesheets = ["../STYLES/TextInput-style.css", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"];
 
-        let oStyleElement = document.createElement("link");
-        oStyleElement.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css";
-        oStyleElement.rel = "stylesheet";
-        this.shadowRoot.appendChild(oStyleElement);
+        stylesheets.forEach(element => {
+            let styleElement = document.createElement("link");
+            styleElement.href = element;
+            styleElement.rel = "stylesheet";
+            this.shadowRoot.appendChild(styleElement);
+
+        });
         
         this.parentContainer = document.createElement("div");
         this.parentContainer.className = "txtInput-container";
@@ -38,12 +39,10 @@ class TextInput extends HTMLElement {
         this.txtInput.placeholder = ".";
         this.txtInput.autocomplete = "off";
         
-    
         this.parentContainer.appendChild(this.txtInput);
         
         this.label = document.createElement("label");
         this.label.className = "txtInput-label";
-        this.label.innerText = this.getAttribute("placeholder");
         this.parentContainer.appendChild(this.label);
         
         this.shadowRoot.appendChild(this.parentContainer);
@@ -54,14 +53,19 @@ class TextInput extends HTMLElement {
         if (!this.hasAttribute("type")) this.setAttribute("type", "text");
         if (!this.hasAttribute("main-color")) this.setAttribute("main-color", TextInput.DEFAULT_MAIN_COLOR);
         if (!this.hasAttribute("secondary-color")) this.setAttribute("secondary-color", TextInput.DEFAULT_SECONDARY_COLOR);
+        if (!this.hasAttribute("placeholder")) this.setAttribute("placeholder", "");
 
         this.style.setProperty("--main-color", this.getAttribute("main-color"));
         this.style.setProperty("--secondary-color", this.getAttribute("secondary-color"));
 
-        // Getting attributes
-        this.txtInput.setAttribute("type", (this.getAttribute("type") == "password") ? "password" : "text");
+
+        this.updateType();
 
         this.label.innerText = this.getAttribute("placeholder");
+    }
+
+    updateType() {
+        this.txtInput.setAttribute("type", (this.getAttribute("type") == "password") ? "password" : "text");
 
         if(this.getAttribute("type") != "text") {
             this.txtInput.className += " inside-icon";
@@ -69,7 +73,7 @@ class TextInput extends HTMLElement {
             this.icon.className = "inside-icon-toggle";
             this.icon.className += (this.getAttribute("type") == "password") ? " far fa-eye" : " fa fa-search"; 
             this.parentContainer.appendChild(this.icon);
-
+            
             if(this.getAttribute("type") == "password") {
                 this.icon.addEventListener("click", () => {
                     this.txtInput.setAttribute("type", this.txtInput.type == "password" ? "text" : "password");
@@ -79,6 +83,7 @@ class TextInput extends HTMLElement {
         }
     }
 
+
     // ----- GET & SET -----
     get value() {
         return this.txtInput.value;
@@ -86,6 +91,24 @@ class TextInput extends HTMLElement {
       
     set value(newValue) {
         this.txtInput.value = newValue;
+    }
+
+    get placeholder() {
+        return this.getAttribute("placeholder");
+    }
+
+    set placeholder(newValue) {
+        this.setAttribute("placeholder", newValue);
+        this.label.innerText = this.getAttribute("placeholder");
+    }
+
+    get type() {
+        return this.getAttribute("type");
+    }
+
+    set type(newValue) {
+        this.setAttribute("type", newValue);
+        this.updateType();
     }
 
 }

@@ -48,6 +48,12 @@ body {
   padding: 1em;
 }
 
+.quote-inside-image {
+  color: white;
+  font-size: var(--quote-fontSize);
+  font-family: var(--quote-fontFamily);
+}
+
 /* ----- LOGIN FORM CONTAINER ----- */
 .loginForm-container {
   /* FLEX OPTIONS */

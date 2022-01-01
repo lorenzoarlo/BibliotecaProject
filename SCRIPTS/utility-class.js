@@ -63,7 +63,6 @@ class Utility {
     }
 
     static do_login(e) {
-        e.preventDefault();
         let submitter = e.srcElement;
     
         let toSend = new FormData();
