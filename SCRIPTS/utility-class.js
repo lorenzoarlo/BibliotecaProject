@@ -51,52 +51,6 @@ class Utility {
         parentElement.appendChild(blurredBg);
     }
 
-    static changeTxt_visibility(e, inputID) {
-        let txt = document.querySelector(`#${inputID}`);
-        let tipo = txt.type == "password" ? "text" : "password";
-        e.srcElement.classList.toggle("fa-eye-slash");
-        txt.setAttribute("type", tipo);
-    }
-
-    static waitFor = time => new Promise(resolve => setTimeout(resolve, time));
-
-    static async write_typewriting(element, finalText, typingSpeed, loop = false, delay = 0) {
-        return new Promise(async resolve => {
-            for(let i = 0; i < finalText.length; i++) {
-                element.innerText = finalText.substring(0, i + 1);
-                await Utility.waitFor(typingSpeed);
-            }
-            resolve();
-            if(loop) {
-                await Utility.waitFor(delay);
-                Utility.write_typewriting(element, finalText, typingSpeed, true, delay)
-            };
-        });
-    }
-
-    static async erase_typewriting(element, erasingSpeed) {
-        return new Promise(async resolve => {
-            let initialLength = element.innerText.length;
-            for(let i = 0; i < initialLength; i++) {
-                element.innerText = element.innerText.substring(0, element.innerText.length - 1);
-                await Utility.waitFor(erasingSpeed);
-            }
-            resolve();
-        });
-    }
-
-    static writeWords_typewriting(element, words, typingSpeed, stillTime, erasingSpeed) {
-        return new Promise(async resolve => {
-            for(let i = 0; i < words.length; i++) {
-                await Utility.write_typewriting(element, words[i], typingSpeed);
-                await Utility.waitFor(stillTime);
-                await Utility.erase_typewriting(element, erasingSpeed);
-            }
-            resolve();
-            Utility.writeWords_typewriting(element, words, typingSpeed, stillTime, erasingSpeed);
-        });
-    }
-
     static SetSession(username, password) {
         sessionStorage.setItem("session-username", username);
         sessionStorage.setItem("session-password", password);
@@ -106,6 +60,38 @@ class Utility {
         let session_username = sessionStorage.getItem("session-username");
         let session_password = sessionStorage.getItem("session-password");
         return {username: session_username, password: session_password};
+    }
+
+    static do_login(e) {
+        e.preventDefault();
+        let submitter = e.srcElement;
+    
+        let toSend = new FormData();
+        let username = document.querySelector("#txtUsername").value;
+        let password = document.querySelector("#txtPassword").value;
+        toSend.append("username", username);
+        toSend.append("password", password);
+    
+        submitter.disabled = true;
+    
+        fetch("../PHP_QUERIES/php-login.php", { method: "POST", body: toSend })
+            .then((response) => response.text())
+            .then(function (response) {
+                let output = JSON.parse(response);
+                if (output["authentication"]) {
+                    let newURL = (output["user-type"] == "admin") ? "admin_personalArea.html" : "user_personalArea.html";
+                    Utility.SetSession(username, password);
+                    Utility.ReindirizzaTo(newURL);
+                } else {
+                    Utility.Summon_ErrorAlert(document.querySelector(".loginForm-container"), "Errore di autenticazione! Credenziali non corrette!");
+                }
+            })
+            .catch(error => {
+                Utility.Summon_ErrorAlert(document.querySelector(".loginForm-container"), "Errore di connessione!");  
+            })
+            .finally(function() {
+                submitter.disabled = false;
+            });   
     }
 
     static ReindirizzaTo(newURL) {

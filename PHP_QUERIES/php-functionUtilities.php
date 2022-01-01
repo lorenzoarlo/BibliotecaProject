@@ -126,6 +126,39 @@
         return array($result->num_rows, $output);
     }
 
+    function getLoans($connection, $searchString, $offset, $nRecords) {
+        $searchString = "%" . strtoupper($searchString) . "%";
+
+        $q = "SELECT prestiti.idPrestito, prestiti.codTessera, prestiti.nInventario, prestiti.inizioPrestito, prestiti.finePrestito, prestiti.classeAttuale, utenti.nome as utente_nome, utenti.cognome as utente_cognome, libri.titolo, libri.ISBN   
+        FROM prestiti
+        NATURAL JOIN utenti 
+        NATURAL JOIN libri
+        WHERE (UPPER(codTessera) LIKE '$searchString') 
+        OR (UPPER(@utente_nome) LIKE '$searchString')
+        OR (UPPER(@utente_cognome) LIKE '$searchString')
+        OR (CAST(inizioPrestito as char) LIKE '$searchString')
+        OR (CAST(finePrestito as char) LIKE '$searchString')
+        OR (UPPER(titolo) LIKE '$searchString');";
+
+        $result = $connection->query($q);
+
+        $output = array();
+        $nRecords = ($nRecords < 0) ? $result->num_rows : $nRecords;
+
+        $iOffset = 0;
+        $inserted = 0;
+        while($row = mysqli_fetch_assoc($result)) {
+            if($iOffset < $offset) {
+                $iOffset++;
+                continue;
+            }
+            $inserted++;
+            $output[] = $row;
+            if($inserted >= $nRecords) break;
+        }
+
+        return array($result->num_rows, $output);
+    }
 
 
     // ----- ADD -----

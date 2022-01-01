@@ -13,13 +13,14 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="../SCRIPTS/utility-class.js"></script>
-    <script src="../SCRIPTS/script-insertToDatabase.js"></script>
+    <script src="../SCRIPTS/script-getDatabaseTable.js"></script>
     <script>
         this.onload = () => {
             get_all_users('usersTable');
             get_all_categories('categoriesTable');
             get_all_authors('authorsTable');
             get_all_books('booksTable');
+            get_all_loans('loansTable');
         }
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -141,6 +142,36 @@
                 <tbody>
                     <tr>
                         <td colspan="6">Errore di connessione</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr class="separation-line" />
+        <div class="table-container" id="loansTable">
+            <span class="default-title">ELENCO PRESTITI</span>
+            <div class="txtInput-container">
+                <input type="text" class="txtInput" placeholder="." autocomplete="off"/>
+                <label class="txtInput-label">Cerca in prestiti</label>
+                <i class="fa fa-search inside-icon-toggle" onclick="Utility.ResetPaginationDatabaseTable('loansTable'); get_all_loans('loansTable');"></i>
+            </div>
+            <div class="table-navigator">
+                <button type="button" class="navigator-button previous" disabled><i class="material-icons">&#xe314;</i></button>
+                <span class="result-pages" data-offset="0">Risultati 0-0 di 0</span>
+                <button type="button" class="navigator-button next" disabled><i class="material-icons">&#xe315;</i></button>
+            </div>
+            <table class="database-table">
+                <thead>
+                    <tr>
+                        <td>TESSERA UTENTE</td>
+                        <td>NOME UTENTE</td>
+                        <td>TITOLO LIBRO</td>
+                        <td>INIZIO PRESTITO</td>
+                        <td>FINE PRESTITO</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5">Errore di connessione</td>
                     </tr>
                 </tbody>
             </table>

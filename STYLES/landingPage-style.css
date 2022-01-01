@@ -48,27 +48,6 @@ body {
   padding: 1em;
 }
 
-
-.animated-text {
-  /* FONT OPTIONS*/
-  font-family: "Waiting for the Sunrise";
-  color: var(--quote-fontColor);
-  font-size: var(--quote-fontSize);
-  letter-spacing: .125em;
-  font-weight: 900;
-  
-  text-align: center;
-}
-
-.animated-text::after {
-  content: '|';
-  animation: blink .5s steps(2) infinite;
-}
-
-@keyframes blink {
-  to { opacity: 0;}
-}
-
 /* ----- LOGIN FORM CONTAINER ----- */
 .loginForm-container {
   /* FLEX OPTIONS */
