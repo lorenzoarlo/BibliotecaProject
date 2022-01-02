@@ -177,7 +177,7 @@ class DatabaseTable extends HTMLElement {
             });
 
 
-            Utility.RemoveAllChildren(tbody);
+            Utilities.RemoveAllChildren(tbody);
 
             if(output["data"].length == 0) {
                 let trow = document.createElement("tr");
@@ -206,7 +206,7 @@ class DatabaseTable extends HTMLElement {
                         let key = columns.find(c => c.primaryKey)["columnName"];
                         let value = trow.querySelector(".primary-key").innerText;
                         let URL = `${thisObject.getAttribute("destinationURL")}?${key}=${value}`;
-                        Utility.ReindirizzaTo(URL);
+                        Utilities.ReindirizzaTo(URL);
                     }
                 }
                 

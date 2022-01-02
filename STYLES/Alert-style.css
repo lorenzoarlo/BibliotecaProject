@@ -1,8 +1,9 @@
 :root {
   --alert-successColor: lightgreen;
   --alert-errorColor: crimson;
+  --alert-warningColor: coral;
   --alert-fontFamily: "Open Sans";
-  --alert-fontSize: calc(1.5vw + 0.8rem);
+  --alert-fontSize: 16px;
 }
 
 .blurred-background {
@@ -73,6 +74,10 @@
 }
 .success {
   background-color: var(--alert-successColor);
+}
+
+.warning {
+  background-color: var(--alert-warningColor);
 }
 
 .alert-content {

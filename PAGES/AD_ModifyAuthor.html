@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="../STYLES/main-style.css" />
@@ -21,16 +20,16 @@
     <script type="text/javascript">
         let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_codiceCategoria = urlParams.get('codiceCategoria');
+        const OG_codiceAutore = urlParams.get('codiceAutore');
 
         this.onload = function() {
             resetValues_txt();
             alertContainer = document.querySelector(".default-container");
         }
 
-        function get_category(primaryKey) {
+        function get_author(primaryKey) {
             return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=category"
+                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=author"
                 let toSend = new FormData();
                 toSend.append("primaryKey", primaryKey);
 
@@ -39,7 +38,7 @@
                 .then(function (response) {
                     let output = JSON.parse(response);
                     if(!output["record"]) {
-                        new Alert("error", "Codice categoria non corretto!", true, alertContainer);
+                        new Alert("error", "Codice autore non corretto!", true, alertContainer);
                         document.querySelectorAll("button").forEach(button => button.disabled = true);
                     }
                     resolve(output);
@@ -51,24 +50,29 @@
         }
 
         async function resetValues_txt() {
-            const OG_Record = await get_category(OG_codiceCategoria);
+            const OG_Record = await get_category(OG_codiceAutore);
             if(!OG_Record) return;
 
-            let txtCodiceCategoria = document.querySelector("#txtCodiceCategoria");
-            txtCodiceCategoria.value = OG_Record["record"]["codiceCategoria"];
+            let txtCodiceAutore = document.querySelector("#txtCodiceAutore");
+            txtCodiceAutore.value = OG_Record["record"]["codiceAutore"];
 
-            let txtDescrizioneCategoria = document.querySelector("#txtDescrizioneCategoria");
-            txtDescrizioneCategoria.value = OG_Record["record"]["descrizione"];
+            let txtNomeAutore = document.querySelector("#txtNomeAutore");
+            txtNomeAutore.value = OG_Record["record"]["nome"];
+
+            let txtCognomeAutore = document.querySelector("#txtCognomeAutore");
+            txtNomeAutore.value = OG_Record["record"]["cognome"];
+
         }
 
         async function modifyRecord() {
-            const OG_Record = await get_category(OG_codiceCategoria);
+            const OG_Record = await get_category(OG_codiceAutore);
             if(!OG_Record) return;
 
-            let codiceCategoria = document.querySelector("#txtCodiceCategoria").value;
-            let descrizioneCategoria = document.querySelector("#txtDescrizioneCategoria").value;
+            let codiceAutore = document.querySelector("#txtCodiceAutore").value;
+            let nomeAutore = document.querySelector("#txtNomeAutore").value;
+            let cognomeAutore = document.querySelector("#txtCognomeAutore").value;
 
-            if(OG_Record["record"]["codiceCategoria"] == codiceCategoria && OG_Record["record"]["descrizione"] == descrizioneCategoria) {
+            if(OG_Record["record"]["codiceAutore"] == codiceAutore && OG_Record["record"]["nome"] == nomeAutore && OG_Record["record"]["cognome"] == cognomeAutore) {
                 new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
                 return;
             }
@@ -80,10 +84,11 @@
             toSend.append("adminUsername", session["username"]);
             toSend.append("adminPassword", session["password"]);
             toSend.append("originalPK", OG_Record["record"]["codiceCategoria"]);
-            if(OG_Record["record"]["codiceCategoria"] != codiceCategoria) toSend.append("codiceCategoria", codiceCategoria);
-            if(OG_Record["record"]["descrizione"] != descrizioneCategoria) toSend.append("descrizioneCategoria", descrizioneCategoria);
+            if(OG_Record["record"]["codiceAutore"] != codiceAutore) toSend.append("codiceAutore", codiceAutore);
+            if(OG_Record["record"]["nome"] != nomeAutore) toSend.append("nomeAutore", nomeAutore);
+            if(OG_Record["record"]["cognome"] != cognomeAutore) toSend.append("cognomeAutore", cognomeAutore);
 
-            fetch("../PHP_QUERIES/phpFunctions-Modify.php?tableName=categories", { method: "POST", body: toSend })
+            fetch("../PHP_QUERIES/phpFunctions-Modify.php?tableName=authors", { method: "POST", body: toSend })
             .then(response => response.text())
             .then(function (response) {
                 let output = JSON.parse(response);
@@ -113,9 +118,10 @@
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
     <section class="default-container">
-        <span class="default-title">MODIFICA CATEGORIA</span>
-        <text-input type="text" placeholder="Codice categoria" id="txtCodiceCategoria"></text-input>
-        <text-input type="text" placeholder="Descrizione categoria" id="txtDescrizioneCategoria"></text-input>
+        <span class="default-title">MODIFICA AUTORE</span>
+        <text-input type="text" placeholder="Codice autore" id="txtCodiceAutore"></text-input>
+        <text-input type="text" placeholder="Nome" id="txtNomeAutore"></text-input>
+        <text-input type="text" placeholder="Cognome" id="txtCognomeAutore"></text-input>
         <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>
         <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button>
     </section>

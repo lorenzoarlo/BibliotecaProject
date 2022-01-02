@@ -1,4 +1,4 @@
-class Utility {
+class Utilities {
     static SetSession(username, password) {
         sessionStorage.setItem("session-username", username);
         sessionStorage.setItem("session-password", password);
@@ -21,14 +21,14 @@ class Utility {
     
         submitter.disabled = true;
     
-        fetch("../PHP_QUERIES/php-login.php", { method: "POST", body: toSend })
+        fetch("../PHP_QUERIES/phpFunction-Login.php", { method: "POST", body: toSend })
             .then((response) => response.text())
             .then(function (response) {
                 let output = JSON.parse(response);
                 if (output["authentication"]) {
                     let newURL = (output["user-type"] == "admin") ? "admin_personalArea.html" : "user_personalArea.html";
-                    Utility.SetSession(username, password);
-                    Utility.ReindirizzaTo(newURL);
+                    Utilities.SetSession(username, password);
+                    Utilities.ReindirizzaTo(newURL);
                 } else {
                     new Alert("error",  
                     "Errore di autenticazione! Credenziali non corrette!",

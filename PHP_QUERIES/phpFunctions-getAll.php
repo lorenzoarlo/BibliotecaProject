@@ -33,7 +33,6 @@
             break;
         default:
             $response["error"] = true;
-            query_terminate($connection);
             break;
     }
 

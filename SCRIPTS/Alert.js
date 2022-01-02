@@ -14,7 +14,7 @@ class Alert {
     }
 
     constructor(alertType, message, toSummon = false, parent = null) {
-        if(alertType !== "success" && alertType !== "error") throw "Alert type doesn't exist!";
+        if(alertType !== "success" && alertType !== "error" && alertType !== "warning") throw "Alert type doesn't exist!";
 
         this.blurredBackground = document.createElement("div");
         this.blurredBackground.className = "blurred-background";

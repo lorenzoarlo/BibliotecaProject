@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="../STYLES/landingPage-style.css" />
     <link rel="stylesheet" href="../STYLES/input-style.css" />
     <link rel="stylesheet" href="../STYLES/Alert-style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
@@ -24,7 +25,7 @@
         <span class="headbar-subtitle">Biblioteca</span>
     </header>
     <section class="image-container">
-        <typewriting-text class="quote-inside-image">
+        <typewriting-text class="quote-inside-image" still-time="5000" erasing-speed="50">
             <word>"Inserire una citazione commovente ;)"</word>
         </typewriting-text>
     </section>
@@ -32,7 +33,7 @@
         <span class="login-title">ACCEDI ALLA TUA AREA PERSONALE</span>
         <text-input type="text" placeholder="E-mail o codice tessera" id="txtUsername"></text-input>
         <text-input type="password" placeholder="Password" id="txtPassword"></text-input>
-        <button type="submit" class="ok-button" onclick="Utility.do_login(event)">LOGIN</button>
+        <button type="submit" class="personalized-button red-button" onclick="Utilities.do_login(event)">LOGIN</button>
     </section>
     <!-- <section class="rules-container"></section> -->
     <footer class="credits-container">

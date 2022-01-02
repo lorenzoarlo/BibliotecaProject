@@ -1,38 +1,58 @@
-:root {
-  --input-mainColor: var(--main-backgroundColor);
-  --input-secondaryColor: var(--secondary-backgroundColor);
-  --inputHover-fontColor: white;
-}
-
 /* ----- BUTTON ----- */
 
-.ok-button {
+.personalized-button {
   background-color: white;
   
   padding: 0.4em 0.3em;
 
-  border: 3px solid var(--input-secondaryColor);
   border-radius: 10px;
-  
-  color: var(--input-secondaryColor);
+  color: black;
+  border: 3px solid black;
+
   letter-spacing: 1px;
-  
+
   cursor: pointer;
   transition: 0.3s;
 }
 
-.ok-button:hover {
-  background-color: var(--input-secondaryColor);
-  color: var(--inputHover-fontColor);
+.personalized-button:hover {
+  color: white;
 }
 
-
-.ok-button:disabled, .ok-button:disabled:hover {
+.personalized-button:disabled, .personalized-button:disabled:hover {
   border-color: gray;
+  background-color: white;
   color: black;
-  background-color: var(--inputHover-fontColor);
   cursor: not-allowed;
 }
+
+.green-button {
+  border: 3px solid lawngreen;
+  color: lawngreen;
+}
+
+.green-button:hover {
+  background-color: lawngreen;
+}
+
+.orange-button {
+  border: 3px solid coral;
+  color: coral;
+}
+
+.orange-button:hover {
+  background-color: coral;
+}
+
+.red-button {
+  border: 3px solid crimson;
+  color: red;
+}
+
+.red-button:hover {
+  background-color: crimson;
+}
+
 
 /* ----- ROUND TOGGLE ----- */
 .toggle-container {

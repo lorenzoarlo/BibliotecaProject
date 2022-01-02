@@ -1,7 +1,7 @@
 nInventario;titolo;ISBN;editore;nScaffale;codCategoria;codAutore
 1;'Harry Potter e la pietra filosofale';8808920305;NULL;1;'101';'ROWL'
 2;'Uno studio in rosso';7828940305;NULL;1;'101';'DOY'
-3;'Harry Potter e il calice di fuoco';7828940305;NULL;1;'101';'ROWL'
+3;'Harry Potter e il calice di fuoco';7828940305;NULL;1;'803';'ROWL'
 4;'Lo zibaldone';8808920305;NULL;1;'101';'LEOP'
 5;'Harry Potter e i doni della morte';7828940305;NULL;1;'101';'ROWL'
 6;'Harry Potter e l ordine della fenice';7828940305;NULL;1;'101';'ROWL'
