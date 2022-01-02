@@ -44,7 +44,7 @@ class TextInput extends HTMLElement {
         this.label = document.createElement("label");
         this.label.className = "txtInput-label";
         this.parentContainer.appendChild(this.label);
-        
+
         this.shadowRoot.appendChild(this.parentContainer);
     }
 
@@ -69,18 +69,24 @@ class TextInput extends HTMLElement {
 
         if(this.getAttribute("type") != "text") {
             this.txtInput.className += " inside-icon";
+            
+            if(this.parentContainer.contains(this.icon)) this.parentContainer.removeChild(this.icon);
             this.icon = document.createElement("i");
             this.icon.className = "inside-icon-toggle";
             this.icon.className += (this.getAttribute("type") == "password") ? " far fa-eye" : " fa fa-search"; 
             this.parentContainer.appendChild(this.icon);
             
-            if(this.getAttribute("type") == "password") {
+            if(this.type == "password") {
                 this.icon.addEventListener("click", () => {
                     this.txtInput.setAttribute("type", this.txtInput.type == "password" ? "text" : "password");
                     this.icon.classList.toggle("fa-eye-slash");
                 })
             }
         }
+    }
+
+    btnSearch_addListener(event) {
+        this.icon.onclick = event;
     }
 
 

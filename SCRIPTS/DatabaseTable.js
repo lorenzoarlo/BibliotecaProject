@@ -2,6 +2,9 @@
 // -> title = ?""
 // -> textbox-placeholder = ?""
 // -> query-path = ?""
+// -> type = "show", "select"
+// -> destinationURL = ?""
+
 
 // ----- REQUIREMENTS
 // ->  'TextInput.js'
@@ -14,6 +17,8 @@
 // -> primary-key =
 
 class DatabaseTable extends HTMLElement {
+
+    static RECORDS_SHOWN = 5;
 
     constructor() {
         super();
@@ -44,11 +49,11 @@ class DatabaseTable extends HTMLElement {
         this.tableNavigator = document.createElement("div");
         this.tableNavigator.className = "table-navigator";
         
-        this.previousButton = document.createElement("button");
-        this.previousButton.className = "navigator-button";
-        this.previousButton.disabled = true;
-        this.previousButton.innerHTML = "<i class='material-icons'>&#xe314;</i>"
-        this.tableNavigator.appendChild(this.previousButton);
+        this.btn_previousPage = document.createElement("button");
+        this.btn_previousPage.className = "navigator-button";
+        this.btn_previousPage.disabled = true;
+        this.btn_previousPage.innerHTML = "<i class='material-icons'>&#xe314;</i>"
+        this.tableNavigator.appendChild(this.btn_previousPage);
         
         this.pageResults = document.createElement("span");
         this.pageResults.className = "result-pages";
@@ -56,11 +61,11 @@ class DatabaseTable extends HTMLElement {
         this.pageResults.innerText = "Risultati 0-0 di 0";
         this.tableNavigator.appendChild(this.pageResults);
 
-        this.nextButton = document.createElement("button");
-        this.nextButton.className = "navigator-button";
-        this.nextButton.disabled = true;
-        this.nextButton.innerHTML = "<i class='material-icons'>&#xe315;</i>"
-        this.tableNavigator.appendChild(this.nextButton);
+        this.btn_nextPage = document.createElement("button");
+        this.btn_nextPage.className = "navigator-button";
+        this.btn_nextPage.disabled = true;
+        this.btn_nextPage.innerHTML = "<i class='material-icons'>&#xe315;</i>"
+        this.tableNavigator.appendChild(this.btn_nextPage);
         
         this.parentContainer.appendChild(this.tableNavigator);
         
@@ -95,8 +100,8 @@ class DatabaseTable extends HTMLElement {
 
         // Default attributes value
         if (!this.hasAttribute("title")) this.setAttribute("title", "");
-        if (!this.hasAttribute("textbox-placeholder")) this.setAttribute("textbox-placeholder", "");
-        
+        if (!this.hasAttribute("textbox-placeholder")) this.setAttribute("textbox-placeholder", "");        
+        if (!this.hasAttribute("type")) this.setAttribute("type", "show");
 
         this.spanTitle.innerText = this.getAttribute("title");
 
@@ -120,9 +125,99 @@ class DatabaseTable extends HTMLElement {
         defaultRow.appendChild(defaultCell);
         this.tbody.appendChild(defaultRow); 
 
-
+        if(this.getAttribute("query-path")) this.requestToDatabase(this.getAttribute("query-path"));
 
     }
+
+    requestToDatabase(path, searchString = null) {
+        const thisObject = this;
+        const columns = this.columns;
+        const tbody = this.tbody; 
+        const span_PageResults = this.pageResults;
+        const btn_previousPage = this.btn_previousPage;
+        const btn_nextPage = this.btn_nextPage;
+        const txtSearch = this.txtSearch;
+
+        let toSend = new FormData();
+
+        searchString = (searchString == null) ? this.txtSearch.value : searchString;
+        let offset = parseInt(span_PageResults.dataset.offset);
+        let retrieveRecords = DatabaseTable.RECORDS_SHOWN;
+
+        toSend.append("searchString", searchString);
+        toSend.append("offset", offset);
+        toSend.append("retrieveRecords", retrieveRecords);
+
+        fetch(path, { method: "POST", body: toSend })
+        .then((response) => response.text())
+        .then(function (response) {
+            let output = JSON.parse(response);
+            if(output["error"]) alert("errore");
+
+            // ----- TABLE NAVIGATOR -----
+            let lastRecordShown = offset + output["data"].length;
+            let offsetToDisplay = (output["data"].length == 0) ? 0 : offset + 1;
+            span_PageResults.innerText = `Risultati ${offsetToDisplay} - ${lastRecordShown} di ${output["totalRows"]}`;
+            btn_previousPage.disabled = (offset == 0);
+            btn_nextPage.disabled = (lastRecordShown == output["totalRows"]);
+
+            btn_previousPage.onclick = () => {
+                span_PageResults.dataset.offset = `${offset - retrieveRecords}`;
+                thisObject.requestToDatabase(path, searchString);
+            }
+
+            btn_nextPage.onclick = () => {
+                span_PageResults.dataset.offset = `${offset + retrieveRecords}`;
+                thisObject.requestToDatabase(path, searchString);
+            }
+
+            txtSearch.btnSearch_addListener(() => {
+                span_PageResults.dataset.offset = "0";
+                thisObject.requestToDatabase(thisObject.getAttribute("query-path"));
+            });
+
+
+            Utility.RemoveAllChildren(tbody);
+
+            if(output["data"].length == 0) {
+                let trow = document.createElement("tr");
+
+                let td = document.createElement("td");
+                td.innerText = "Nessun risultato trovato";
+                td.colSpan = columns.filter(c => !c.invisible).length;;
+                trow.appendChild(td);
+
+                tbody.appendChild(trow);   
+            }
+
+            output["data"].forEach(record => {
+                let trow = document.createElement("tr");
+
+                columns.forEach(column => {
+                    let td = document.createElement("td");
+                    td.innerText = record[column.columnName];
+                    if(column.primaryKey) td.classList.add("primary-key");
+                    if(column.invisible) td.classList.add("invisible-field");
+                    trow.appendChild(td);
+                });
+
+                if(thisObject.getAttribute("type") == "show") {
+                    trow.onclick = () => {
+                        let key = columns.find(c => c.primaryKey)["columnName"];
+                        let value = trow.querySelector(".primary-key").innerText;
+                        let URL = `${thisObject.getAttribute("destinationURL")}?${key}=${value}`;
+                        Utility.ReindirizzaTo(URL);
+                    }
+                }
+                
+
+
+                tbody.appendChild(trow);
+            });
+
+        });  
+    }
+
 }
 
 document.currentScript.onload = () => customElements.define("database-table", DatabaseTable);

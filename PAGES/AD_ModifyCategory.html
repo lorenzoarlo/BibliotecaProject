@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../STYLES/main-style.css" />
+    <link rel="stylesheet" href="../STYLES/admin_personalArea-style.css" />
+    <link rel="stylesheet" href="../STYLES/input-style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../SCRIPTS/Utilities.js"></script>
+    <script type="text/javascript">
+        let OG_codiceCategoria = "";
+        let OG_descrizioneCategoria = "";
+
+        this.onload = () => {
+            const urlParams = new URLSearchParams(this.location.search);
+            OG_codiceCategoria = urlParams.get('codiceCategoria');
+            OG_descrizioneCategoria = "";
+
+            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=category"
+
+            let toSend = new FormData();
+            toSend.append("primaryKey", OG_codiceCategoria);
+
+
+            fetch(QUERY_PATH, { method: "POST", body: toSend })
+            .then((response) => response.text())
+            .then(function (response) {
+                let output = JSON.parse(response);
+
+                if(output["record"]) {
+                    OG_codiceCategoria = output["record"]["codiceCategoria"]; 
+                    OG_descrizioneCategoria = output["record"]["descrizione"];
+                    
+
+                    btnReset_onclick();
+                }else {
+                    console.log("non trovato!", output["error"]);
+                }
+
+            });
+
+
+        }
+
+        function btnReset_onclick() {
+            let txtCodiceCategoria = document.querySelector("#txtCodiceCategoria");
+            txtCodiceCategoria.value = OG_codiceCategoria;
+
+            let txtDescrizioneCategoria = document.querySelector("#txtDescrizioneCategoria");
+            txtDescrizioneCategoria.value = OG_descrizioneCategoria;
+        }
+
+
+    </script>
+    <title>Biblioteca I.T.T.S.</title>
+</head>
+<body>
+    <header class="headbar-container">
+        <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
+        <span class="headbar-subtitle">Area personale amministratore</span>
+    </header>
+    <section class="default-container">
+        <span class="default-title">MODIFICA CATEGORIA</span>
+        <text-input type="text" placeholder="Codice categoria" id="txtCodiceCategoria"></text-input>
+        <text-input type="text" placeholder="Descrizione categoria" id="txtDescrizioneCategoria"></text-input>
+        <button class="ok-button">MODIFICA CAMPI</button>
+        <button class="ok-button" onclick="btnReset_onclick()">RIPRISTINA AI VALORI INIZIALI</button>
+    </section>
+    <script src="../SCRIPTS/TextInput.js"></script>
+</body>
+</html>

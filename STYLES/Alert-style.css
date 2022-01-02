@@ -1,0 +1,114 @@
+:root {
+  --alert-successColor: lightgreen;
+  --alert-errorColor: crimson;
+  --alert-fontFamily: "Open Sans";
+  --alert-fontSize: calc(1.5vw + 0.8rem);
+}
+
+.blurred-background {
+  display: flex;
+
+  /* FLEX OPTIONS */
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+
+  /* POSITION */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 1;
+
+  cursor: not-allowed;
+
+  background-color: rgb(255, 255, 255, 0.8);
+}
+
+.alert {
+  width: 80vw;
+  height: max-content;
+  padding: 1em;
+
+  border-color: black !important;
+  border-style: solid;
+  border-width: 3px;
+
+  display: flex;
+
+  /* FLEX OPTIONS */
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  align-content: space-between;
+
+  transform-origin: center center;
+
+  animation: enterAnimation .5s 1 0s ease-out;
+
+  cursor: default;
+  overflow: hidden;
+}
+
+@keyframes enterAnimation {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.error {
+  background-color: var(--alert-errorColor);
+}
+.success {
+  background-color: var(--alert-successColor);
+}
+
+.alert-content {
+  justify-self: left;
+
+  text-transform: uppercase;
+  font-family: var(--alert-fontFamily);
+  font-size: var(--alert-fontSize);
+
+  overflow-y: hidden;
+}
+
+/* IMAGE-CONTAINER */
+@media (orientation: landscape) {
+  .alert-content {
+    overflow-x: hidden;
+  }
+}
+
+@media (orientation: portrait) {
+  .alert-content {
+    overflow-x: auto;
+  }
+}
+
+.alert-button {
+  justify-self: right;
+
+  transition: 0.2s;
+  cursor: pointer;
+
+  margin: 0.2em;
+
+  flex-shrink: 0;
+}
+
+.alert-button:hover {
+  color: white;
+}
