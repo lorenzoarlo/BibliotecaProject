@@ -103,7 +103,7 @@
 
     function get_admin($connection, $primaryKey) {
         $q = "SELECT amministratori.idAmministratore, 
-        amministratori.admin_mail as adminMail, 
+        amministratori.admin_mail as adminMail
         FROM amministratori
         WHERE idAmministratore = $primaryKey;";
 

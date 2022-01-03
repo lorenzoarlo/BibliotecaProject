@@ -84,7 +84,7 @@ class DatabaseTable extends HTMLElement {
         this.shadowRoot.appendChild(this.parentContainer);
 
         this.columns = [];
-        this.nPage = 0;
+        this.offset = 0;
         this.allRecords_queryPath = "../PHP_QUERIES/phpFunctions-getAll.php?tableName=";
         this.oneRecord_queryPath = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=";
     }
@@ -113,7 +113,10 @@ class DatabaseTable extends HTMLElement {
         if(this.getAttribute("type") == "select") {
             this.columns.unshift({
                 isCheckbox: true,
-                invisible: false
+                invisible: false,
+                columnTitle: null,
+                columnName: null,
+                primaryKey: false
             });
         }
 
@@ -122,7 +125,9 @@ class DatabaseTable extends HTMLElement {
         let headerRow = document.createElement("tr");
         this.columns.forEach(c => {
             let td = document.createElement("td");
-            if(!c.isCheckbox) {
+            if(c.isCheckbox) td.className = "checkbox-cell";
+
+            if(!c.isCheckbox){
                 td.innerText = c.columnTitle;
                 if(c.invisible) td.classList.add("invisible-field");
             }
@@ -142,9 +147,93 @@ class DatabaseTable extends HTMLElement {
         if (this.hasAttribute("table-name")) {
             this.allRecords_queryPath += this.getAttribute("table-name");
             this.oneRecord_queryPath += this.getAttribute("table-name");
-            this.updateTable(this.allRecords_queryPath);
+            this.InitializeValues();
         }
         
+    }
+
+    async InitializeValues() {
+        let response = await DatabaseTable.getRecordsBySearchString(this.allRecords_queryPath, "", this.offset, DatabaseTable.RECORDS_SHOWN);
+        this.show_updateTable(response);
+    }
+
+    show_updateTable(response) {
+        this.show_updateTableNavigator("", this.offset, DatabaseTable.RECORDS_SHOWN, response["data"].length, response["totalRows"]);
+        this.updateTableRecords(response["data"]);
+    }
+
+    updateTableRecords(data) {
+        Utilities.RemoveAllChildren(this.tbody);
+        
+        if(data.length == 0) {
+            let trow = document.createElement("tr");
+            let td = document.createElement("td");
+            td.innerText = "Nessun risultato trovato";
+            td.colSpan = this.columns.filter(c => !c.invisible).length;;
+            trow.appendChild(td);
+            this.tbody.appendChild(trow);
+        } else {
+            data.forEach(record => {
+                let trow = document.createElement("tr");
+
+                this.columns.forEach(column => {
+                    let td = document.createElement("td");
+
+                    if(column.isCheckbox) DatabaseTable.appendRadioButton(td, this.id, record[this.columns.find(c => c.primaryKey).columnName]);
+                    
+                    if(!column.isCheckbox) {
+                        td.innerText = record[column.columnName];
+                        if(column.primaryKey) td.classList.add("primary-key");
+                        if(column.invisible) td.classList.add("invisible-field");
+                    }
+
+                    trow.appendChild(td);
+                });
+
+                if(this.getAttribute("type") == "show") {
+                    trow.onclick = () => {
+                        let keyName = this.columns.find(c => c.primaryKey)["columnName"];
+                        let keyValue = trow.querySelector(".primary-key").innerText;
+                        let URL = `${this.getAttribute("destinationURL")}?${keyName}=${keyValue}`;
+                        Utilities.ReindirizzaTo(URL);
+                    };
+                }
+
+                if(this.getAttribute("type") == "select") {
+                    trow.onclick = () => trow.querySelector(".radioButton").checked = true; 
+                }
+                
+                this.tbody.appendChild(trow);
+            });
+        }
+    }
+
+    show_updateTableNavigator(searchString, offset, toRetrieve, retrievedRecords, totalRows) {
+        let lastRecordShown = offset + retrievedRecords;
+        let offsetToDisplay = (retrievedRecords == 0) ? 0 : offset + 1;
+
+        this.pageResults.innerText = `Risultati ${offsetToDisplay} - ${lastRecordShown} di ${totalRows}`;
+        this.btn_previousPage.disabled = (offset == 0);
+        this.btn_nextPage.disabled = (lastRecordShown == totalRows);
+
+        this.btn_previousPage.onclick = async () => {
+            this.offset -= toRetrieve;
+            this.offset = (this.offset < 0) ? 0 : this.offset;
+            let response = await DatabaseTable.getRecordsBySearchString(this.allRecords_queryPath, searchString, this.offset, toRetrieve);
+            this.show_updateTable(response);
+        }
+
+        this.btn_nextPage.onclick = async () => {
+            this.offset += toRetrieve;
+            let response = await DatabaseTable.getRecordsBySearchString(this.allRecords_queryPath, searchString, this.offset, toRetrieve);
+            this.show_updateTable(response);
+        } 
+    }
+
+    select_updateTableNavigator(retrievedRecords) {
+        this.pageResults.innerText = `Risultati ${retrievedRecords} - ${retrievedRecords} di ${retrievedRecords}`;
+        this.btn_previousPage.disabled = true;
+        this.btn_nextPage.disabled = true;   
     }
 
     static getRecordsBySearchString(path, searchString, offset, retrieveRecords) {
@@ -159,7 +248,7 @@ class DatabaseTable extends HTMLElement {
             .then((response) => response.text())
             .then((text) => {
                 resolve(JSON.parse(text));
-            })
+            });
         });
     }
 
@@ -191,143 +280,26 @@ class DatabaseTable extends HTMLElement {
         rdbLabel.className = "radioButton-label";
         cell.appendChild(rdbLabel);
     }
-    
 
-    async updateTable(data) {
-        Utilities.RemoveAllChildren(this.tbody);
-        
-        
-        if(data.length == 0) {
-            let trow = document.createElement("tr");
-            let td = document.createElement("td");
-            td.innerText = "Nessun risultato trovato";
-            td.colSpan = columns.filter(c => !c.invisible).length;;
-            trow.appendChild(td);
-            this.tbody.appendChild(trow);
-        } else {
-            data.forEach(record => {
-                let trow = document.createElement("tr");
-
-                this.columns.forEach(column => {
-                    let td = document.createElement("td");
-
-                    if(column.isCheckbox) DatabaseTable.appendRadioButton(td, this.id, record[columns.find(c => c.primaryKey).columnName]);
-                    
-                    if(!column.isCheckbox) {
-                        td.innerText = record[column.columnName];
-                        if(column.primaryKey) td.classList.add("primary-key");
-                        if(column.invisible) td.classList.add("invisible-field");
-                    }
-
-                    trow.appendChild(td);
-                });
-
-                if(this.type == "show") {
-                    trow.onclick = () => {
-                        let keyName = columns.find(c => c.primaryKey)["columnName"];
-                        let keyValue = trow.querySelector(".primary-key").innerText;
-                        let URL = `${thisObject.getAttribute("destinationURL")}?${keyName}=${keyValue}`;
-                        Utilities.ReindirizzaTo(URL);
-                    };
-                }
-
-                if(this.type == "select") {
-                    trow.onclick = () => trow.querySelector(".radioButton").checked = true; 
-                }
-                
-                this.tbody.appendChild(trow);
-            });
+    get value() {
+        let toReturn = undefined;
+        if(this.getAttribute("type") == "select") {
+            let checkedRow = Array.from(this.tbody.querySelectorAll("tr")).find(row => row.querySelector(".radioButton").checked);
+            if (checkedRow) toReturn = checkedRow.querySelector(".primary-key").innerText;
         }
-         
-
-        
-        return;
-        const thisObject = this;
-        const columns = this.columns;
-        const tbody = this.tbody; 
-        const span_PageResults = this.pageResults;
-        const btn_previousPage = this.btn_previousPage;
-        const btn_nextPage = this.btn_nextPage;
-        const txtSearch = this.txtSearch;
-
-        searchString = (searchString == null) ? this.txtSearch.value : searchString;
-        let offset = this.nPage;
-        let retrieveRecords = DatabaseTable.RECORDS_SHOWN;
-
-        let output = await DatabaseTable.getRecordsBySearchString(path, searchString, offset, retrieveRecords);
-
-
-        output["data"].forEach(record => {
-            let trow = document.createElement("tr");
-
-            columns.forEach(column => {
-                let td = document.createElement("td");
-                if(column.isCheckbox) {
-                    td.className = "checkbox-cell";
-
-                    let radioButton = document.createElement("input");
-                    radioButton.type = "radio";
-                    radioButton.name = thisObject.id;
-                    radioButton.value = record[columns.find(c => c.primaryKey).columnName];
-                    radioButton.className = "radioButton"
-                    td.appendChild(radioButton);
-
-                    let rdbLabel = document.createElement("label");
-                    rdbLabel.className = "radioButton-label";
-                    td.appendChild(rdbLabel);
-
-                }else {
-                    td.innerText = record[column.columnName];
-                    if(column.primaryKey) td.classList.add("primary-key");
-                    if(column.invisible) td.classList.add("invisible-field");
-                }
-                
-                trow.appendChild(td);
-            });
-
-            if(thisObject.getAttribute("type") == "show") {
-                trow.onclick = () => {
-                    let key = columns.find(c => c.primaryKey)["columnName"];
-                    let value = trow.querySelector(".primary-key").innerText;
-                    let URL = `${thisObject.getAttribute("destinationURL")}?${key}=${value}`;
-                    Utilities.ReindirizzaTo(URL);
-                }
-            }
-
-            if(thisObject.getAttribute("type") == "select") {
-                trow.onclick = () => {
-                    let radioButton = trow.querySelector(".radioButton");
-                    radioButton.value = trow.querySelector(".primary-key").innerText;
-                    radioButton.checked = true; 
-                }
-            }
-
-            tbody.appendChild(trow);
-        });
+        return toReturn;
     }
 
-    updateTableNavigator(offset, retrievedRecords, totalRows, searchString = "") {
-        let lastRecordShown = offset + retrievedRecords;
-        let offsetToDisplay = (retrievedRecords == 0) ? 0 : offset + 1;
+    async setNewValue(newValue) {
+        let data = [];
+        let response = await DatabaseTable.getRecordByPrimaryKey(this.oneRecord_queryPath, newValue);
+        if (response["record"]) data.push(response["record"]);
+        this.updateTableRecords(data);
+        this.select_updateTableNavigator(data.length);
+    }
 
-        this.span_PageResults.innerText = `Risultati ${offsetToDisplay} - ${lastRecordShown} di ${retrievedRecords}`;
-        this.btn_previousPage.disabled = (offset == 0);
-        this.btn_nextPage.disabled = (lastRecordShown == output["totalRows"]);
-
-        this.btn_previousPage.onclick = () => {
-            this.nPage = offset - retrieveRecords;
-            this.updateTable(this.allRecords_queryPath, searchString);
-        }
-
-        this.btn_nextPage.onclick = () => {
-            this.nPage = offset + retrieveRecords;
-            this.updateTable(this.allRecords_queryPath, searchString);
-        }
-
-        this.txtSearch.btnSearch_addListener(() => {
-            this.nPage = 0;
-            this.updateTable(this.allRecords_queryPath);
-        });
+    set value(newValue) {
+        console.log("Impossibile impostare il valore. Utilizzare la funzione setNewValue(newValue)...");
     }
 
 }
