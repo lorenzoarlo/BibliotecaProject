@@ -20,25 +20,26 @@
     <script type="text/javascript">
         let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_codiceAutore = urlParams.get('codiceAutore');
+        const OG_codiceTessera = urlParams.get('codiceTessera');
 
         this.onload = function() {
             resetValues_txt();
             alertContainer = document.querySelector(".default-container");
         }
 
-        function get_author(primaryKey) {
+        function get_user(primaryKey) {
             return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=authors"
+                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=users"
                 let toSend = new FormData();
                 toSend.append("primaryKey", primaryKey);
 
                 fetch(QUERY_PATH, { method: "POST", body: toSend })
                 .then(response => response.text())
                 .then(function (response) {
+                    console.log(response);
                     let output = JSON.parse(response);
                     if(!output["record"]) {
-                        new Alert("error", "Codice autore non corretto!", true, alertContainer);
+                        new Alert("error", "Codice tessera non corretto!", true, alertContainer);
                         document.querySelectorAll("button").forEach(button => button.disabled = true);
                     }
                     resolve(output);
@@ -50,30 +51,42 @@
         }
 
         async function resetValues_txt() {
-            const OG_Record = await get_author(OG_codiceAutore);
+            const OG_Record = await get_user(OG_codiceTessera);
             if(!OG_Record) return;
 
-            let txtCodiceAutore = document.querySelector("#txtCodiceAutore");
-            txtCodiceAutore.value = OG_Record["record"]["codiceAutore"];
+            let txtCodiceTessera = document.querySelector("#txtCodiceTessera");
+            txtCodiceTessera.value = OG_Record["record"]["codiceTessera"];
 
-            let txtNomeAutore = document.querySelector("#txtNomeAutore");
-            txtNomeAutore.value = OG_Record["record"]["nome"];
+            let txtNomeUtente = document.querySelector("#txtNomeUtente");
+            txtNomeUtente.value = OG_Record["record"]["nome"];
 
-            let txtCognomeAutore = document.querySelector("#txtCognomeAutore");
-            txtCognomeAutore.value = OG_Record["record"]["cognome"];
+            let txtCognomeUtente = document.querySelector("#txtCognomeUtente");
+            txtCognomeUtente.value = OG_Record["record"]["cognome"];
+
+            let txtMail = document.querySelector("#txtMail");
+            txtMail.value = OG_Record["record"]["userMail"];
+
+            let txtDataRegistrazione = document.querySelector("#txtDataRegistrazione");
+            txtDataRegistrazione.value = OG_Record["record"]["dataRegistrazione"];
+
+            let txtCodiceFiscale = document.querySelector("#txtCodiceFiscale");
+            txtCodiceFiscale.value = OG_Record["record"]["codiceFiscale"];
+
+            let txtIDAmministratore = document.querySelector("#txtIDAmministratore");
+            txtIDAmministratore.value = OG_Record["record"]["idAmministratore"];
 
         }
 
         async function modifyRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=authors";
-            const OG_Record = await get_author(OG_codiceAutore);
+            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=users";
+            const OG_Record = await get_user(OG_codiceTessera);
             if(!OG_Record) return;
 
-            let codiceAutore = document.querySelector("#txtCodiceAutore").value;
-            let nomeAutore = document.querySelector("#txtNomeAutore").value;
-            let cognomeAutore = document.querySelector("#txtCognomeAutore").value;
-
-            if(OG_Record["record"]["codiceAutore"] == codiceAutore && OG_Record["record"]["nome"] == nomeAutore && OG_Record["record"]["cognome"] == cognomeAutore) {
+            let nomeUtente = document.querySelector("#txtNomeUtente").value;
+            let cognomeUtente = document.querySelector("#txtCognomeUtente").value;
+            let mailUtente = document.querySelector("#txtMail").value;
+            
+            if(OG_Record["record"]["userMail"] == mailUtente && OG_Record["record"]["nome"] == nomeUtente  && OG_Record["record"]["cognome"] == cognomeUtente) {
                 new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
                 return;
             }
@@ -84,10 +97,10 @@
 
             toSend.append("adminUsername", session["username"]);
             toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["codiceAutore"]);
-            if(OG_Record["record"]["codiceAutore"] != codiceAutore) toSend.append("codiceAutore", codiceAutore);
-            if(OG_Record["record"]["nome"] != nomeAutore) toSend.append("nomeAutore", nomeAutore);
-            if(OG_Record["record"]["cognome"] != cognomeAutore) toSend.append("cognomeAutore", cognomeAutore);
+            toSend.append("originalPK", OG_Record["record"]["codiceTessera"]);
+            if(OG_Record["record"]["userMail"] != mailUtente) toSend.append("userMail", mailUtente);
+            if(OG_Record["record"]["nome"] != nomeUtente) toSend.append("nomeUtente", nomeUtente);
+            if(OG_Record["record"]["cognome"] != cognomeUtente) toSend.append("cognomeUtente", cognomeUtente);
 
             fetch(QUERY_PATH, { method: "POST", body: toSend })
             .then(response => response.text())
@@ -120,10 +133,16 @@
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
     <section class="default-container">
-        <span class="default-title">MODIFICA AUTORE</span>
-        <text-input type="text" placeholder="Codice autore" id="txtCodiceAutore"></text-input>
-        <text-input type="text" placeholder="Nome" id="txtNomeAutore"></text-input>
-        <text-input type="text" placeholder="Cognome" id="txtCognomeAutore"></text-input>
+        <span class="default-title">MODIFICA UTENTE</span>
+        <text-input type="text" placeholder="Codice tessera" id="txtCodiceTessera" read-only></text-input>
+        <text-input type="text" placeholder="Nome" id="txtNomeUtente"></text-input>
+        <text-input type="text" placeholder="Cognome" id="txtCognomeUtente"></text-input>
+        <text-input type="text" placeholder="E-Mail" id="txtMail" read-only></text-input>
+        <text-input type="text" placeholder="Data registrazione" id="txtDataRegistrazione" read-only></text-input>
+        <text-input type="text" placeholder="Codice fiscale" id="txtCodiceFiscale" read-only></text-input>
+        <text-input type="text" placeholder="ID amministratore" id="txtIDAmministratore" read-only></text-input>
+        
+        <button class="personalized-button red-button" onclick="">RIGENERA PASSWORD</button>
         <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>
         <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button>
     </section>

@@ -4,6 +4,8 @@
 // -> id = ?""
 // -> main-color = colore
 // -> secondary-color = color
+// -> readonly
+
 
 // ----- REQUIREMENTS
 // ->  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css'
@@ -21,7 +23,10 @@ class TextInput extends HTMLElement {
 
         this.attachShadow({mode: 'open'});
 
-        const stylesheets = ["../STYLES/TextInput-style.css", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"];
+        const stylesheets = ["../STYLES/TextInput-style.css", 
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css", 
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css", 
+        "https://fonts.googleapis.com/css?family=Material+Icons"];
 
         stylesheets.forEach(element => {
             let styleElement = document.createElement("link");
@@ -55,6 +60,17 @@ class TextInput extends HTMLElement {
         if (!this.hasAttribute("secondary-color")) this.setAttribute("secondary-color", TextInput.DEFAULT_SECONDARY_COLOR);
         if (!this.hasAttribute("placeholder")) this.setAttribute("placeholder", "");
 
+
+        if(this.hasAttribute("read-only")) {
+            this.txtInput.readOnly = true;
+            this.txtInput.classList.add("inside-lock")
+            let lockIcon = document.createElement("i");
+            lockIcon.className = "material-icons inside-icon-lock";
+            lockIcon.innerHTML = "&#xe899;"; 
+            this.parentContainer.appendChild(lockIcon);
+        }
+
+
         this.style.setProperty("--main-color", this.getAttribute("main-color"));
         this.style.setProperty("--secondary-color", this.getAttribute("secondary-color"));
 
@@ -86,7 +102,7 @@ class TextInput extends HTMLElement {
     }
 
     btnSearch_addListener(event) {
-        this.icon.onclick = event;
+        if(this.type == "search") this.icon.onclick = event;
     }
 
 

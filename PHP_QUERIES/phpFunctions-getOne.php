@@ -12,22 +12,22 @@
     $result = null;
 
     switch($tableName) {
-        case "category":
+        case "categories":
             $result = get_category($connection, $primaryKey);
             break;
-        case "author":
-            $result = get_admin($connection, $primaryKey);
+        case "authors":
+            $result = get_author($connection, $primaryKey);
             break;
-        case "book":
+        case "books":
             $result = get_book($connection, $primaryKey);
             break;
-        case "loan":
+        case "loans":
             $result = get_loan($connection, $primaryKey);
             break;
-        case "user":
+        case "users":
             $result = get_user($connection, $primaryKey);
             break;
-        case "admin":
+        case "admins":
             $result = get_admin($connection, $primaryKey);
             break;
         default:
@@ -80,8 +80,8 @@
         utenti.cognome, 
         utenti.user_mail as userMail, 
         utenti.codFiscale as codiceFiscale, 
-        utenti.dataRegistr as dataRegistrazione, 
-        utenti.idAmministratore, 
+        DATE_FORMAT(utenti.dataRegistr, '%d-%m-%Y') as dataRegistrazione, 
+        utenti.idAmministratore 
         FROM utenti
         WHERE codTessera = '$primaryKey';";
 

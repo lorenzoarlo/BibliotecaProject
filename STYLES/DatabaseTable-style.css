@@ -110,3 +110,38 @@
   font-size: var(--header-fontSize);
   color: var(--secondary-fontColor);
 }
+
+.checkbox-cell {
+  width: 4em;
+}
+
+.radioButton {
+  display: none;
+}
+
+.radioButton-label {
+  width: 1.2em;
+  height: 1.2em;
+  display: inline-block;
+  border: 2px solid lightgray;
+  border-radius: 2px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: .5s;
+
+  pointer-events: none;
+}
+
+.radioButton:checked + .radioButton-label {
+  background-color:deepskyblue;
+  border: deepskyblue;
+}
+
+.radioButton:checked + .radioButton-label::before {
+  content: '✔';
+  font-size: .8em;
+  color: white;
+}

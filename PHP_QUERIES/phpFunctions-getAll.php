@@ -31,6 +31,9 @@
         case "users":
             $result = get_all_users($connection, $searchString);
             break;
+        case "admins":
+            $result = get_all_admins($connection, $searchString);
+            break;
         default:
             $response["error"] = true;
             break;
@@ -69,7 +72,7 @@
         $q = "SELECT categorie.codCategoria as codiceCategoria,
         categorie.descrizione
         FROM categorie
-        WHERE (UPPER(@codiceCategoria) LIKE '$searchString') 
+        WHERE (UPPER(codCategoria) LIKE '$searchString') 
         OR (UPPER(descrizione) LIKE '$searchString');";
 
         return $connection->query($q);
@@ -82,7 +85,7 @@
         CONCAT(autori.nome, ' ', autori.cognome) as nomeCompleto
         FROM autori
         WHERE (UPPER(codAutore) LIKE '$searchString') 
-        OR (UPPER(@nomeCompleto) LIKE '$searchString');";
+        OR (UPPER(CONCAT(autori.nome, ' ', autori.cognome)) LIKE '$searchString');";
 
         return $connection->query($q);
     }
@@ -101,12 +104,21 @@
         FROM libri 
         NATURAL JOIN categorie 
         NATURAL JOIN autori
-        WHERE (CAST(@numeroInventario as char) LIKE '$searchString') 
+        WHERE (CAST(nInventario as char) LIKE '$searchString') 
         OR (UPPER(titolo) LIKE '$searchString')
         OR (CAST(ISBN as char) LIKE '$searchString')
-        OR (UPPER(@descrizioneCategoria) LIKE '$searchString')
-        OR (UPPER(@nomeCompletoAutore) LIKE '$searchString')
-        OR (CAST(@numeroScaffale as char) LIKE '$searchString');";
+        OR (UPPER(descrizione) LIKE '$searchString')
+        OR (UPPER(CONCAT(autori.nome, ' ', autori.cognome)) LIKE '$searchString')
+        OR (CAST(nScaffale as char) LIKE '$searchString');";
+
+        return $connection->query($q);
+    }
+
+    function get_all_admins($connection, $searchString) {
+        $q = "SELECT amministratori.idAmministratore, 
+        amministratori.admin_mail as adminMail
+        FROM amministratori
+        WHERE (UPPER(admin_mail) LIKE '$searchString');";
 
         return $connection->query($q);
     }
@@ -122,7 +134,7 @@
         CONCAT(utenti.nome, ' ', utenti.cognome) as nomeCompleto
         FROM utenti
         WHERE (UPPER(codTessera) LIKE '$searchString') 
-        OR (UPPER(@nomeCompleto) LIKE '$searchString')  
+        OR (UPPER(CONCAT(utenti.nome, ' ', utenti.cognome)) LIKE '$searchString')  
         OR (UPPER(user_mail) LIKE '$searchString')
         OR (UPPER(codFiscale) LIKE '$searchString');";
 
@@ -139,12 +151,12 @@
         CONCAT(utenti.nome, ' ', utenti.cognome) as nomeCompletoUtente, 
         libri.titolo 
         FROM prestiti
-        NATURAL JOIN utenti 
         NATURAL JOIN libri
+        NATURAL JOIN utenti 
         WHERE (UPPER(codTessera) LIKE '$searchString') 
-        OR (UPPER(@nomeCompletoUtente) LIKE '$searchString')
-        OR (CAST(@inizioPrestito as char) LIKE '$searchString')
-        OR (CAST(@finePrestito as char) LIKE '$searchString')
+        OR (UPPER(CONCAT(utenti.nome, ' ', utenti.cognome)) LIKE '$searchString')
+        OR (DATE_FORMAT(prestiti.inizioPrestito, '%d-%m-%Y') LIKE '$searchString')
+        OR (DATE_FORMAT(prestiti.finePrestito, '%d-%m-%Y') LIKE '$searchString')
         OR (UPPER(titolo) LIKE '$searchString');";
 
         return $connection->query($q);

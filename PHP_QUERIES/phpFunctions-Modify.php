@@ -39,7 +39,24 @@
             $response["updated"] = update_category($connection, $originalPK, $codiceCategoria, $descrizioneCategoria);
             break;
         case "authors":
-            
+            $codiceAutore = (isset($_POST["codiceAutore"])) ? $_POST["codiceAutore"] : null;
+            $nomeAutore = (isset($_POST["nomeAutore"])) ? $_POST["nomeAutore"] : null;
+            $cognomeAutore = (isset($_POST["cognomeAutore"])) ? $_POST["cognomeAutore"] : null;
+
+            if(!is_null($codiceAutore) && exists_codiceAutore($connection, $codiceAutore)) break;
+
+            $response["uniqueField-collision"] = false;
+            $response["updated"] = update_author($connection, $originalPK, $codiceAutore, $nomeAutore, $cognomeAutore);
+            break;
+        case "users":
+            $mailUtente = (isset($_POST["userMail"])) ? $_POST["userMail"] : null;
+            $nomeUtente = (isset($_POST["nomeUtente"])) ? $_POST["nomeUtente"] : null;
+            $cognomeUtente = (isset($_POST["cognomeUtente"])) ? $_POST["cognomeUtente"] : null;
+
+            if(!is_null($mailUtente) && exists_mail($connection, $mailUtente)) break;
+
+            $response["uniqueField-collision"] = false;
+            $response["updated"] = update_user($connection, $originalPK, $nomeUtente, $cognomeUtente, $mailUtente);
             break;
         default:
             break;
@@ -58,7 +75,30 @@
         $q = $q . " WHERE codCategoria = '$originalPK';";
 
         return $connection->query($q);
+    }
 
+    function update_author($connection, $originalPK, $codiceAutore, $nomeAutore, $cognomeAutore) {
+        $q = "UPDATE autori
+        SET";
+        if($codiceAutore) $q = $q . " codAutore = '$codiceAutore',";
+        if($nomeAutore) $q = $q . " nome = '$nomeAutore',";
+        if($cognomeAutore) $q = $q . " cognome = '$cognomeAutore',";
+        $q = substr_replace($q, "", -1);
+        $q = $q . " WHERE codAutore = '$originalPK';";
+
+        return $connection->query($q);
+    }
+
+    function update_user($connection, $originalPK, $nomeUtente, $cognomeUtente, $mailUtente) {
+        $q = "UPDATE utenti
+        SET";
+        if($nomeUtente) $q = $q . " nome = '$nomeUtente',";
+        if($cognomeUtente) $q = $q . " cognome = '$cognomeUtente',";
+        if($mailUtente) $q = $q . " user_mail = '$mailUtente',";
+        $q = substr_replace($q, "", -1);
+        $q = $q . " WHERE codTessera = '$originalPK';";
+
+        return $connection->query($q);
     }
 
 

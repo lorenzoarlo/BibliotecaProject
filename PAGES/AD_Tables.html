@@ -26,7 +26,7 @@
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
     <section class="default-container">
-        <database-table query-path="../PHP_QUERIES/phpFunctions-getAll.php?tableName=categories" 
+        <database-table table-name="categories" 
         title="ELENCO CATEGORIE" 
         textbox-placeholder="Cerca in categorie"
         destinationURL="AD_ModifyCategory.html">
@@ -34,7 +34,7 @@
             <database-column column-coding-name="descrizione">DESCRIZIONE</database-column>
         </database-table>
         <hr class="separation-line"/>
-        <database-table query-path="../PHP_QUERIES/phpFunctions-getAll.php?tableName=authors" 
+        <database-table table-name="authors" 
         title="ELENCO AUTORI" 
         textbox-placeholder="Cerca in autori"
         destinationURL="AD_ModifyAuthor.html">
@@ -42,29 +42,45 @@
             <database-column column-coding-name="nomeCompleto">NOME</database-column>
         </database-table>
         <hr class="separation-line"/>
-        <database-table query-path="../PHP_QUERIES/phpFunctions-getAll.php?tableName=users" title="ELENCO UTENTI" textbox-placeholder="Cerca in utenti">
+        <database-table table-name="users" 
+        title="ELENCO UTENTI" 
+        textbox-placeholder="Cerca in utenti"
+        destinationURL="AD_ModifyUser.html">
             <database-column column-coding-name="codiceTessera" primary-key>CODICE TESSERA</database-column>
             <database-column column-coding-name="userMail">E-MAIL</database-column>
             <database-column column-coding-name="nomeCompleto">NOME</database-column>
             <database-column column-coding-name="codiceFiscale">CODICE FISCALE</database-column>
         </database-table>
         <hr class="separation-line"/>
-        <database-table query-path="../PHP_QUERIES/phpFunctions-getAll.php?tableName=books" title="ELENCO LIBRI" textbox-placeholder="Cerca in libri">
+        <database-table table-name="books" 
+        title="ELENCO LIBRI"
+        textbox-placeholder="Cerca in libri">
             <database-column column-coding-name="numeroInventario" primary-key>N° INVENTARIO</database-column>
             <database-column column-coding-name="titolo">TITOLO</database-column>
             <database-column column-coding-name="ISBN">ISBN</database-column>
             <database-column column-coding-name="descrizioneCategoria">CATEGORIA</database-column>
-            <database-column column-coding-name="nomeCompletoAutore">TITOLO</database-column>
+            <database-column column-coding-name="nomeCompletoAutore">AUTORE</database-column>
             <database-column column-coding-name="numeroScaffale">SCAFFALE</database-column>
         </database-table>
         <hr class="separation-line"/>
-        <database-table query-path="../PHP_QUERIES/phpFunctions-getAll.php?tableName=loans" title="ELENCO PRESTITI" textbox-placeholder="Cerca in prestiti">
+        <database-table table-name="loans" 
+        title="ELENCO PRESTITI" 
+        textbox-placeholder="Cerca in prestiti">
             <database-column column-coding-name="idPrestito" not-visible primary-key>ID PRESTITO</database-column>
             <database-column column-coding-name="codiceTessera">CODICE TESSERA</database-column>
             <database-column column-coding-name="nomeCompletoUtente">NOME UTENTE</database-column>
             <database-column column-coding-name="titolo">TITOLO LIBRO</database-column>
             <database-column column-coding-name="inizioPrestito">INIZIO PRESTITO</database-column>
             <database-column column-coding-name="finePrestito">FINE PRESTITO</database-column>
+        </database-table>
+        <hr class="separation-line"/>
+        <database-table table-name="admins"
+        id="selectTableAmministratori"
+        type="select"
+        title="ELENCO AMMINISTRATORI" 
+        textbox-placeholder="Cerca in amministratori">
+            <database-column column-coding-name="idAmministratore" not-visible primary-key>ID AMMINISTRATORI</database-column>
+            <database-column column-coding-name="adminMail">E-MAIL</database-column>
         </database-table>
     </section>
     
