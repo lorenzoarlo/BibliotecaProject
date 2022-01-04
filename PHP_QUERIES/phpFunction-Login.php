@@ -11,18 +11,23 @@
 
     $response = array(
         "authentication" => false,
-        "user-type" => null
+        "user-type" => null,
+        "primary-key" => null
     );
     
-    if(loginAdmin($connection, $loginUsername, $loginPassword)) {
+    $admin = loginAdmin($connection, $loginUsername, $loginPassword); 
+    if($admin) {
         $response["authentication"] = true;
+        $response["primary-key"] = $admin["idAmministratore"];
         $response["user-type"] = "admin";
         echo json_encode($response);
         query_terminate($connection);
     }
 
-    if(loginUser($connection, $loginUsername, $loginPassword)) {
+    $user = loginUser($connection, $loginUsername, $loginPassword); 
+    if($user) {
         $response["authentication"] = true;
+        $response["primary-key"] = $user["codTessera"];
         $response["user-type"] = "user";
     }
 

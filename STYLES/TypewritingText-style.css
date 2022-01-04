@@ -3,6 +3,8 @@
 }
 
 .animated-text {
+  text-justify: center;
+
   color: var(--fontColor);
   font-size: var(--fontSize);
   font-family: var(--fontFamily);

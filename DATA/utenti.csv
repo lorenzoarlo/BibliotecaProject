@@ -10,3 +10,4 @@ codTessera;nome;cognome;user_mail;dataRegistr;codFiscale;user_password;idAmminis
 'i0000000';'Bruce';'Ronson';'luigi.ronsoni@gmail.com';'01-01-2000';'HMTDLD86S14C476D';'0bdcf6fc71606a300d5faa4da24f5bd204beb1248941c4187d6ee68784f40f1c';1;'tmp1'
 'l0000000';'Tony';'Stark';'luigi.stark@gmail.com';'01-01-2000';'TVCFZJ48R62D891O';'0bdcf6fc71606a300d5faa4da24f5bd204beb1248941c4187d6ee68784f40f1c';2;'tmp1'
 'm0000000';'Imperatore';'Spaziale';'imperatore.Spaziale@gmail.com';'01-01-2000';'IMPSPAZ8R62D891O';'0bdcf6fc71606a300d5faa4da24f5bd204beb1248941c4187d6ee68784f40f1c';2;'tmp1'
+'n0000000';"Utente";"Predefinito";'utente';'01-01-2000';'UTNPRED17727CR';'ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb';1;'a'

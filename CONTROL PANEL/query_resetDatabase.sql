@@ -30,7 +30,7 @@ CREATE OR REPLACE TABLE biblioteca.Utenti(
 );
 CREATE OR REPLACE TABLE biblioteca.Libri(
 	nInventario int AUTO_INCREMENT PRIMARY KEY,
-    titolo varchar(32) NOT NULL,
+    titolo varchar(64) NOT NULL,
     ISBN int NOT NULL,
     editore varchar(16),
     nScaffale int NOT NULL,

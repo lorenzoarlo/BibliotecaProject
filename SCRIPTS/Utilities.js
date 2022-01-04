@@ -1,13 +1,15 @@
 class Utilities {
-    static SetSession(username, password) {
+    static SetSession(primaryKey, username, password) {
+        sessionStorage.setItem("session-primaryKey", primaryKey);
         sessionStorage.setItem("session-username", username);
         sessionStorage.setItem("session-password", password);
     }
 
     static GetSession() {
+        let session_primaryKey = sessionStorage.getItem("session-primaryKey");
         let session_username = sessionStorage.getItem("session-username");
         let session_password = sessionStorage.getItem("session-password");
-        return {username: session_username, password: session_password};
+        return {primaryKey: session_primaryKey, username: session_username, password: session_password};
     }
 
     static do_login(e) {
@@ -26,8 +28,9 @@ class Utilities {
             .then(function (response) {
                 let output = JSON.parse(response);
                 if (output["authentication"]) {
-                    let newURL = (output["user-type"] == "admin") ? "admin_personalArea.html" : "user_personalArea.html";
-                    Utilities.SetSession(username, password);
+                    let newURL = (output["user-type"] == "admin") ? "AD_PersonalArea.html" : "US_PersonalArea.html";
+                    console.log(output);
+                    Utilities.SetSession(output["primary-key"], username, password);
                     Utilities.ReindirizzaTo(newURL);
                 } else {
                     new Alert("error",  

@@ -5,9 +5,9 @@
   
   padding: 0.4em 0.3em;
 
-  border-radius: 1em;
+  border-radius: 10px;
   color: black;
-  border: 1em solid black;
+  border: 3px solid black;
 
   letter-spacing: 1px;
 
@@ -16,6 +16,7 @@
 }
 
 .personalized-button:hover {
+  background-color: black;
   color: white;
 }
 

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../STYLES/main-style.css" />
+    <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
+    <link rel="stylesheet" href="../STYLES/input-style.css" />
+    <link rel="stylesheet" href="../STYLES/Alert-style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
+    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../SCRIPTS/Utilities.js"></script>
+    <script src="../SCRIPTS/Alert.js"></script>
+    <title>Biblioteca I.T.T.S.</title>
+</head>
+<body>
+    <header class="headbar-container">
+        <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
+        <span class="headbar-subtitle">Area personale utente</span>
+    </header>
+    <section class="default-container">
+        <span class="default-title">ELENCO LIBRI DISPONIBILI</span>
+        <database-table table-name="booksNotLoan" 
+        textbox-placeholder="Cerca in libri">
+            <database-column column-coding-name="numeroInventario" primary-key not-visible>N° INVENTARIO</database-column>
+            <database-column column-coding-name="titolo">TITOLO</database-column>
+            <database-column column-coding-name="ISBN">ISBN</database-column>
+            <database-column column-coding-name="descrizioneCategoria">CATEGORIA</database-column>
+            <database-column column-coding-name="nomeCompletoAutore">AUTORE</database-column>
+            <!-- <database-column column-coding-name="numeroScaffale">SCAFFALE</database-column> -->
+        </database-table>
+    </section>
+    
+    <script src="../SCRIPTS/TextInput.js"></script>
+    <script src="../SCRIPTS/DatabaseTable.js"></script>
+</body>
+</html>

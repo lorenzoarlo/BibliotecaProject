@@ -34,6 +34,12 @@
         case "admins":
             $result = get_all_admins($connection, $searchString);
             break;
+        case "usersNotLoan":
+            $result = get_all_usersNotLoan($connection, $searchString);
+            break;
+        case "booksNotLoan":
+            $result = get_all_booksNotLoan($connection, $searchString);
+            break;
         default:
             $response["error"] = true;
             break;
@@ -114,6 +120,34 @@
         return $connection->query($q);
     }
 
+    function get_all_booksNotLoan($connection, $searchString) {
+        $q = "SELECT libri.nInventario as numeroInventario, 
+        libri.titolo, 
+        libri.ISBN,
+        libri.nScaffale as numeroScaffale, 
+        libri.codCategoria, 
+        libri.codAutore,
+        categorie.descrizione as descrizioneCategoria, 
+        autori.nome, 
+        autori.cognome,
+        CONCAT(autori.nome, ' ', autori.cognome) as nomeCompletoAutore
+        FROM libri 
+        NATURAL JOIN categorie 
+        NATURAL JOIN autori
+        NATURAL LEFT JOIN prestiti
+        WHERE (prestiti.inizioPrestito IS NULL OR (prestiti.finePrestito IS NOT NULL)) AND 
+        ((CAST(nInventario as char) LIKE '$searchString') 
+        OR (UPPER(titolo) LIKE '$searchString')
+        OR (CAST(ISBN as char) LIKE '$searchString')
+        OR (UPPER(descrizione) LIKE '$searchString')
+        OR (UPPER(CONCAT(autori.nome, ' ', autori.cognome)) LIKE '$searchString')
+        OR (CAST(nScaffale as char) LIKE '$searchString'))
+        GROUP BY nInventario;";
+
+        return $connection->query($q);
+    }
+
+
     function get_all_admins($connection, $searchString) {
         $q = "SELECT amministratori.idAmministratore, 
         amministratori.admin_mail as adminMail
@@ -138,6 +172,27 @@
         OR (UPPER(user_mail) LIKE '$searchString')
         OR (UPPER(codFiscale) LIKE '$searchString');";
 
+        return $connection->query($q);
+    }
+
+    function get_all_usersNotLoan($connection, $searchString) {
+        $q = "SELECT utenti.codTessera as codiceTessera, 
+        utenti.nome, 
+        utenti.cognome, 
+        utenti.user_mail as userMail, 
+        utenti.codFiscale as codiceFiscale, 
+        utenti.dataRegistr as dataRegistrazione, 
+        utenti.idAmministratore, 
+        CONCAT(utenti.nome, ' ', utenti.cognome) as nomeCompleto
+        FROM utenti
+        NATURAL LEFT JOIN prestiti
+        WHERE (prestiti.inizioPrestito IS NULL OR (prestiti.finePrestito IS NOT NULL)) AND
+        ((UPPER(codTessera) LIKE '$searchString') 
+        OR (UPPER(CONCAT(utenti.nome, ' ', utenti.cognome)) LIKE '$searchString')  
+        OR (UPPER(user_mail) LIKE '$searchString')
+        OR (UPPER(codFiscale) LIKE '$searchString'))
+        GROUP BY codTessera;";
+        
         return $connection->query($q);
     }
 

@@ -55,7 +55,16 @@
         $result = $connection->query($q);
 
         return $result->num_rows > 0;
+    }
 
+    function exists_numeroInventario($connection, $valueNumeroInventario) {
+        $q = "SELECT libri.nInventario
+        FROM libri
+        WHERE nInventario = $valueNumeroInventario;";
+
+        $result = $connection->query($q);
+
+        return $result->num_rows > 0;
     }
 
 ?>

@@ -230,7 +230,7 @@ class DatabaseTable extends HTMLElement {
                     trow.appendChild(td);
                 });
 
-                if(this.getAttribute("type") == "show") {
+                if(this.getAttribute("type") == "show" && this.hasAttribute("destinationURL")) {
                     trow.onclick = () => {
                         let keyName = this.columns.find(c => c.primaryKey)["columnName"];
                         let keyValue = trow.querySelector(".primary-key").innerText;

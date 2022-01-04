@@ -19,8 +19,6 @@
     <script src="../SCRIPTS/Alert.js"></script>
     <script type="text/javascript">
         let alertContainer;
-        const urlParams = new URLSearchParams(this.location.search);
-        const OG_codiceTessera = urlParams.get('codiceTessera');
 
         this.onload = function() {
             alertContainer = document.querySelector(".default-container");
@@ -36,10 +34,9 @@
                 fetch(QUERY_PATH, { method: "POST", body: toSend })
                 .then(response => response.text())
                 .then(function (response) {
-                    console.log(response);
                     let output = JSON.parse(response);
                     if(!output["record"]) {
-                        new Alert("error", "Codice tessera non corretto!", true, alertContainer);
+                        new Alert("error", "Dati utente non corretti!", true, alertContainer);
                         document.querySelectorAll("button").forEach(button => button.disabled = true);
                     }
                     resolve(output);
@@ -51,7 +48,10 @@
         }
 
         async function resetValues_txt() {
-            const OG_Record = await get_user(OG_codiceTessera);
+            let session = Utilities.GetSession();
+            console.log(session);
+            const OG_Record = await get_user(session.primaryKey);
+            console.log(OG_Record);
             if(!OG_Record) return;
 
             let txtCodiceTessera = document.querySelector("#txtCodiceTessera");
@@ -72,56 +72,7 @@
             let txtCodiceFiscale = document.querySelector("#txtCodiceFiscale");
             txtCodiceFiscale.value = OG_Record["record"]["codiceFiscale"];
 
-            let tableIDAmministratore = document.querySelector("#tableIDAmministratore");
-            tableIDAmministratore.setRecordChecked(OG_Record["record"]["idAmministratore"]);
-
         }
-
-        async function modifyRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=users";
-            const OG_Record = await get_user(OG_codiceTessera);
-            if(!OG_Record) return;
-
-            let nomeUtente = document.querySelector("#txtNomeUtente").value;
-            let cognomeUtente = document.querySelector("#txtCognomeUtente").value;
-            let mailUtente = document.querySelector("#txtMail").value;
-            
-            if(OG_Record["record"]["userMail"] == mailUtente && OG_Record["record"]["nome"] == nomeUtente  && OG_Record["record"]["cognome"] == cognomeUtente) {
-                new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
-                return;
-            }
-
-            let session = Utilities.GetSession();
-
-            let toSend = new FormData();
-
-            toSend.append("adminUsername", session["username"]);
-            toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["codiceTessera"]);
-            if(OG_Record["record"]["userMail"] != mailUtente) toSend.append("userMail", mailUtente);
-            if(OG_Record["record"]["nome"] != nomeUtente) toSend.append("nomeUtente", nomeUtente);
-            if(OG_Record["record"]["cognome"] != cognomeUtente) toSend.append("cognomeUtente", cognomeUtente);
-
-            fetch(QUERY_PATH, { method: "POST", body: toSend })
-            .then(response => response.text())
-            .then(function (response) {
-                let output = JSON.parse(response);
-                if(!output["authentication"]) {
-                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
-                    return;
-                }
-
-                if(output["uniqueField-collision"]) {
-                    new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
-                    return;
-                }
-
-                if(output["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
-            });
-        }
-
-        
-
 
     </script>
     <title>Biblioteca I.T.T.S.</title>
@@ -129,29 +80,16 @@
 <body>
     <header class="headbar-container">
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
-        <span class="headbar-subtitle">Area personale amministratore</span>
+        <span class="headbar-subtitle">Area personale utente</span>
     </header>
     <section class="default-container">
-        <span class="default-title">MODIFICA UTENTE</span>
+        <span class="default-title">DATI UTENTE</span>
         <text-input type="text" placeholder="Codice tessera" id="txtCodiceTessera" read-only></text-input>
-        <text-input type="text" placeholder="Nome" id="txtNomeUtente"></text-input>
-        <text-input type="text" placeholder="Cognome" id="txtCognomeUtente"></text-input>
+        <text-input type="text" placeholder="Nome" id="txtNomeUtente" read-only></text-input>
+        <text-input type="text" placeholder="Cognome" id="txtCognomeUtente" read-only></text-input>
         <text-input type="text" placeholder="E-Mail" id="txtMail" read-only></text-input>
         <text-input type="text" placeholder="Data registrazione" id="txtDataRegistrazione" read-only></text-input>
         <text-input type="text" placeholder="Codice fiscale" id="txtCodiceFiscale" read-only></text-input>
-        <database-table table-name="admins"
-        textbox-placeholder="ID Amministratore"
-        type="select"
-        read-only
-        id="tableIDAmministratore">
-            <database-column column-coding-name="idAmministratore" primary-key>ID AMMINISTRATORE</database-column>
-            <database-column column-coding-name="adminMail">E-MAIL</database-column>
-        </database-table>
-
-        
-        <button class="personalized-button red-button" onclick="">RIGENERA PASSWORD</button>
-        <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>
-        <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button>
     </section>
     <script src="../SCRIPTS/TextInput.js"></script>
     <script src="../SCRIPTS/DatabaseTable.js"></script>

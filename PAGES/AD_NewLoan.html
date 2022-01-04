@@ -20,14 +20,11 @@
     <script type="text/javascript">
 
         function insertRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Insert.php?tableName=books";
+            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Insert.php?tableName=loans";
 
-            let numeroInventario = document.querySelector("#txtNumeroInventario").value; 
-            let titolo = document.querySelector("#txtTitolo").value;
-            let ISBN = document.querySelector("#txtISBN").value
-            let numeroScaffale = document.querySelector("#txtNumeroScaffale").value;
-            let codiceCategoria = document.querySelector("#tableCodiceCategoria").getRecordChecked();
-            let codiceAutore = document.querySelector("#tableCodiceAutore").getRecordChecked();
+            let classeAttuale = document.querySelector("#txtClasseAttuale").value;
+            let codiceTessera = document.querySelector("#tableCodiceTessera").getRecordChecked();
+            let numeroInventario = document.querySelector("#tableNInventario").getRecordChecked();
             
             let session = Utilities.GetSession();
 
@@ -36,25 +33,18 @@
             toSend.append("adminUsername", session["username"]);
             toSend.append("adminPassword", session["password"]);
             toSend.append("numeroInventario", numeroInventario);
-            toSend.append("titolo", titolo);
-            toSend.append("ISBN", ISBN);
-            toSend.append("numeroScaffale", numeroScaffale);
-            toSend.append("codiceCategoria", codiceCategoria);
-            toSend.append("codiceAutore", codiceAutore);
-
+            toSend.append("codiceTessera", codiceTessera);
+            toSend.append("classeAttuale", classeAttuale);
+            
             let alertContainer = document.querySelector(".default-container");
 
             fetch(QUERY_PATH, { method: "POST", body: toSend })
             .then(response => response.text())
             .then(function (response) {
+                console.log(response);
                 let output = JSON.parse(response);
                 if(!output["authentication"]) {
                     new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
-                    return;
-                }
-
-                if(output["numeroInventarioCollision"]) {
-                    new Alert("error", "Inserimento fallito, numero inventario già utilizzato!", true, alertContainer);
                     return;
                 }
 
@@ -71,27 +61,28 @@
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
     <section class="default-container">
-        <span class="default-title">INSERIMENTO UTENTE</span>
-        <text-input type="text" placeholder="Numero inventario" id="txtNumeroInventario"></text-input>
-        <text-input type="text" placeholder="Titolo" id="txtTitolo"></text-input>
-        <text-input type="text" placeholder="ISBN" id="txtISBN"></text-input>
-        <!-- <text-input type="text" placeholder="Editore" id="txtEditore"></text-input> -->
-        <text-input type="text" placeholder="Numero scaffale" id="txtNumeroScaffale"></text-input>
-        <database-table table-name="categories"
-        textbox-placeholder="Codice categoria"
+        <span class="default-title">INSERIMENTO PRESTITO</span>
+        <database-table table-name="usersNotLoan" 
+        textbox-placeholder="Codice tessera utente"
         type="select"
-        id="tableCodiceCategoria">
-            <database-column column-coding-name="codiceCategoria" primary-key>CODICE CATEGORIA</database-column>
-            <database-column column-coding-name="descrizione">DESCRIZIONE</database-column>
-        </database-table>
-        <database-table table-name="authors" 
-        textbox-placeholder="Codice autore"
-        type="select"
-        id="tableCodiceAutore">
-            <database-column column-coding-name="codiceAutore" primary-key>CODICE AUTORE</database-column>
+        id="tableCodiceTessera">
+            <database-column column-coding-name="codiceTessera" primary-key>CODICE TESSERA</database-column>
+            <database-column column-coding-name="userMail">E-MAIL</database-column>
             <database-column column-coding-name="nomeCompleto">NOME</database-column>
+            <database-column column-coding-name="codiceFiscale">CODICE FISCALE</database-column>
         </database-table>
-
+        <database-table table-name="booksNotLoan" 
+        textbox-placeholder="N° inventario libro"
+        type="select"
+        id="tableNInventario">
+            <database-column column-coding-name="numeroInventario" primary-key>N° INVENTARIO</database-column>
+            <database-column column-coding-name="titolo">TITOLO</database-column>
+            <database-column column-coding-name="ISBN">ISBN</database-column>
+            <database-column column-coding-name="descrizioneCategoria">CATEGORIA</database-column>
+            <database-column column-coding-name="nomeCompletoAutore">AUTORE</database-column>
+            <database-column column-coding-name="numeroScaffale">SCAFFALE</database-column>
+        </database-table>
+        <text-input type="text" placeholder="Classe attuale" id="txtClasseAttuale"></text-input>
         <button class="personalized-button green-button" onclick="insertRecord()">INSERISCI</button>
     </section>
     <script src="../SCRIPTS/TextInput.js"></script>

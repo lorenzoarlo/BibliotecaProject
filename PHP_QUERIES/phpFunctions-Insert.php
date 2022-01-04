@@ -10,6 +10,7 @@
         "codiceCategoriaCollision" => false,
         "codiceAutoreCollision" => false,
         "descrizioneCategoriaCollision" => false,
+        "numeroInventarioCollision" => false,
         "inserted" => false
     );
 
@@ -79,7 +80,22 @@
             $response["inserted"] = insert_user($connection, $codiceTessera, $nomeUtente, $cognomeUtente, $mailUtente, $registrationDate, $codiceFiscale, $passwordInChiaro, $admin["idAmministratore"]);
             break;
         case "books":
+            $numeroInventario = $_POST["numeroInventario"];
             
+            if(exists_numeroInventario($connection, $numeroInventario)) {
+                $response["numeroInventarioCollision"] = true;
+                break;
+            }
+            
+            $titolo = $_POST["titolo"];
+            $ISBN = $_POST["ISBN"];
+            $editore = "";
+            $numeroScaffale = $_POST["numeroScaffale"];
+            $codiceCategoria = $_POST["codiceCategoria"];
+            $codiceAutore = $_POST["codiceAutore"];
+
+            $response["inserted"] = insert_book($connection, $numeroInventario, $titolo, $editore, $ISBN, $numeroScaffale, $codiceCategoria, $codiceAutore);
+
             break;
         case "admins":
             $mailAdmin = $_POST["mailAdmin"];
@@ -93,7 +109,12 @@
             $response["inserted"] = insert_admin($connection, $mailAdmin, $passwordInChiaro);
             break;
         case "loans":
-            
+            $codiceTessera = $_POST["codiceTessera"];
+            $numeroInventario = $_POST["numeroInventario"];
+            $classeAttuale = $_POST["classeAttuale"];
+            $inizioPrestito = date("d-m-Y");
+
+            $response["inserted"] = insert_loan($connection, $codiceTessera, $numeroInventario, $inizioPrestito ,$classeAttuale);
             break;
         default:
             break;
@@ -132,5 +153,19 @@
         return $connection->query($q);
     }
 
+    function insert_book($connection, $numeroInventario, $titolo, $ISBN, $numeroScaffale, $codiceCategoria, $codiceAutore) {
+        $q = "INSERT INTO libri
+        VALUES ($numeroInventario,'$titolo',$ISBN,NULL,$numeroScaffale,'$codiceCategoria','$codiceAutore');";
+        
+        return $connection->query($q);
+    }
+
+    function insert_loan($connection, $codiceTessera, $numeroInventario, $inizioPrestito, $classeAttuale) {
+        $classeAttuale = ($classeAttuale == "") ? "NULL" : "'$classeAttuale'";
+        $q = "INSERT INTO prestiti
+        VALUES (NULL,'$codiceTessera',$numeroInventario,STR_TO_DATE('$inizioPrestito', '%d-%m-%Y'),NULL,$classeAttuale);";
+        
+        return $connection->query($q);
+    }
 
 ?>
