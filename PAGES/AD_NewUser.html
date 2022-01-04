@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../STYLES/main-style.css" />
+    <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
+    <link rel="stylesheet" href="../STYLES/input-style.css" />
+    <link rel="stylesheet" href="../STYLES/Alert-style.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
+    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../SCRIPTS/Utilities.js"></script>
+    <script src="../SCRIPTS/Alert.js"></script>
+    <script type="text/javascript">
+
+        function insertRecord() {
+            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Insert.php?tableName=users";
+
+            let nomeUtente = document.querySelector("#txtNomeUtente").value;
+            let cognomeUtente = document.querySelector("#txtCognomeUtente").value;
+            let mailUtente = document.querySelector("#txtMail").value;
+            let codiceFiscale = document.querySelector("#txtCodiceFiscale").value;
+
+            let session = Utilities.GetSession();
+
+            let toSend = new FormData();
+
+            toSend.append("adminUsername", session["username"]);
+            toSend.append("adminPassword", session["password"]);
+            toSend.append("nomeUtente", nomeUtente);
+            toSend.append("cognomeUtente", cognomeUtente);
+            toSend.append("mailUtente", mailUtente);
+            toSend.append("codiceFiscale", codiceFiscale);
+
+            let alertContainer = document.querySelector(".default-container");
+
+            fetch(QUERY_PATH, { method: "POST", body: toSend })
+            .then(response => response.text())
+            .then(function (response) {
+                let output = JSON.parse(response);
+                if(!output["authentication"]) {
+                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
+                    return;
+                }
+
+                if(output["mailCollision"]) {
+                    new Alert("error", "Inserimento fallito, mail già utilizzata!", true, alertContainer);
+                    return;
+                }
+
+                if(output["codiceFiscaleCollision"]) {
+                    new Alert("error", "Inserimento fallito, codice fiscale già utilizzato!", true, alertContainer);
+                    return;
+                }
+
+                new Alert((output["inserted"]) ? "success" : "error", (output["inserted"]) ? "Inserimento effettuato con successo" : "Inserimento fallito!", true, alertContainer);
+            });
+        }
+
+        
+
+
+    </script>
+    <title>Biblioteca I.T.T.S.</title>
+</head>
+<body>
+    <header class="headbar-container">
+        <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
+        <span class="headbar-subtitle">Area personale amministratore</span>
+    </header>
+    <section class="default-container">
+        <span class="default-title">INSERIMENTO UTENTE</span>
+        <text-input type="text" placeholder="Nome" id="txtNomeUtente"></text-input>
+        <text-input type="text" placeholder="Cognome" id="txtCognomeUtente"></text-input>
+        <text-input type="text" placeholder="E-Mail" id="txtMail"></text-input>
+        <text-input type="text" placeholder="Codice fiscale" id="txtCodiceFiscale"></text-input>
+
+        <button class="personalized-button green-button" onclick="insertRecord()">INSERISCI</button>
+    </section>
+    <script src="../SCRIPTS/TextInput.js"></script>
+    <script src="../SCRIPTS/DatabaseTable.js"></script>
+</body>
+</html>

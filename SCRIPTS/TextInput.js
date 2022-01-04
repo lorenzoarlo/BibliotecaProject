@@ -1,10 +1,11 @@
 // ----- MUST HAVE ATTRIBUTEs
-// -> type = "text", "password", "search"
+// -> type = "text", "password", "iconButton"
 // -> placeholder = ?""
 // -> id = ?""
 // -> main-color = colore
 // -> secondary-color = color
 // -> readonly
+// -> icon-classes = ?""
 
 
 // ----- REQUIREMENTS
@@ -59,17 +60,15 @@ class TextInput extends HTMLElement {
         if (!this.hasAttribute("main-color")) this.setAttribute("main-color", TextInput.DEFAULT_MAIN_COLOR);
         if (!this.hasAttribute("secondary-color")) this.setAttribute("secondary-color", TextInput.DEFAULT_SECONDARY_COLOR);
         if (!this.hasAttribute("placeholder")) this.setAttribute("placeholder", "");
-
+        if (!this.hasAttribute("icon-classes")) this.setAttribute("icon-classes", "fa fa-search")
 
         if(this.hasAttribute("read-only")) {
-            this.txtInput.readOnly = true;
-            this.txtInput.classList.add("inside-lock")
+            this.txtInput.classList.add("inside-lock");
             let lockIcon = document.createElement("i");
-            lockIcon.className = "material-icons inside-icon-lock";
-            lockIcon.innerHTML = "&#xe899;"; 
+            lockIcon.className = "fa fa-lock inside-icon-lock";
             this.parentContainer.appendChild(lockIcon);
+            this.txtInput.readOnly = true;
         }
-
 
         this.style.setProperty("--main-color", this.getAttribute("main-color"));
         this.style.setProperty("--secondary-color", this.getAttribute("secondary-color"));
@@ -83,27 +82,43 @@ class TextInput extends HTMLElement {
     updateType() {
         this.txtInput.setAttribute("type", (this.getAttribute("type") == "password") ? "password" : "text");
 
-        if(this.getAttribute("type") != "text") {
-            this.txtInput.className += " inside-icon";
-            
+        if(this.getAttribute("type") == "password" || this.getAttribute("type") == "iconButton") {
+            this.txtInput.classList.add("inside-icon");
             if(this.parentContainer.contains(this.icon)) this.parentContainer.removeChild(this.icon);
+
             this.icon = document.createElement("i");
-            this.icon.className = "inside-icon-toggle";
-            this.icon.className += (this.getAttribute("type") == "password") ? " far fa-eye" : " fa fa-search"; 
-            this.parentContainer.appendChild(this.icon);
-            
-            if(this.type == "password") {
+            this.icon.classList.add("inside-icon-toggle");
+
+
+            if(this.getAttribute("type") == "iconButton") {
+                this.icon.className += " " + this.getAttribute("icon-classes");    
+            }
+
+            if(this.getAttribute("type") == "password") {
+                this.icon.className += " " + "far fa-eye"
                 this.icon.addEventListener("click", () => {
                     this.txtInput.setAttribute("type", this.txtInput.type == "password" ? "text" : "password");
                     this.icon.classList.toggle("fa-eye-slash");
-                })
+                });    
             }
+
+            this.parentContainer.appendChild(this.icon);
+
         }
     }
 
-    btnSearch_addListener(event) {
-        if(this.type == "search") this.icon.onclick = event;
+    onIconButtonTextInputIcon_click(event) {
+        if(this.type == "iconButton") this.icon.onclick = event;
     }
+
+    onTextInput_blur(event) {
+        this.txtInput.onblur = event;
+    }
+
+    onTextInput_focus(event) {
+        this.txtInput.onfocus = event;
+    }
+    
 
 
     // ----- GET & SET -----
@@ -112,7 +127,42 @@ class TextInput extends HTMLElement {
     }
       
     set value(newValue) {
+        newValue = (newValue) ? newValue : "";
         this.txtInput.value = newValue;
+    }
+
+    get readonly() {
+        return this.hasAttribute("read-only");
+    }
+
+    set readonly(newValue) {
+        if(!this.readonly && newValue) {
+            this.txtInput.classList.add("inside-lock");
+            let lockIcon = document.createElement("i");
+            lockIcon.className = "fa fa-lock inside-icon-lock"; 
+            this.parentContainer.appendChild(lockIcon);
+        }
+        
+        if(this.readonly && !newValue) {
+            this.txtInput.classList.remove("inside-lock");
+            this.parentContainer.removeChild(this.shadowRoot.querySelector(".inside-icon-lock"));   
+            
+        }
+
+        if(newValue) this.setAttribute("read-only", "");
+        else this.removeAttribute("read-only");
+
+        this.txtInput.readOnly = newValue;
+
+    }
+
+    get iconClasses() {
+        return this.getAttribute("icon-classes");
+    }
+
+    set iconClasses(newValue) {
+        this.setAttribute("icon-classes", newValue);
+        this.updateType();
     }
 
     get placeholder() {
@@ -132,6 +182,9 @@ class TextInput extends HTMLElement {
         this.setAttribute("type", newValue);
         this.updateType();
     }
+
+    
+
 
 }
 

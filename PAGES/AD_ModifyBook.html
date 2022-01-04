@@ -20,26 +20,25 @@
     <script type="text/javascript">
         let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_codiceTessera = urlParams.get('codiceTessera');
+        const OG_numeroInventario = urlParams.get('numeroInventario');
 
         this.onload = function() {
             resetValues_txt();
             alertContainer = document.querySelector(".default-container");
         }
 
-        function get_user(primaryKey) {
+        function get_book(primaryKey) {
             return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=users"
+                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=books"
                 let toSend = new FormData();
                 toSend.append("primaryKey", primaryKey);
 
                 fetch(QUERY_PATH, { method: "POST", body: toSend })
                 .then(response => response.text())
                 .then(function (response) {
-                    console.log(response);
                     let output = JSON.parse(response);
                     if(!output["record"]) {
-                        new Alert("error", "Codice tessera non corretto!", true, alertContainer);
+                        new Alert("error", "Numero inventario non corretto!", true, alertContainer);
                         document.querySelectorAll("button").forEach(button => button.disabled = true);
                     }
                     resolve(output);
@@ -51,42 +50,43 @@
         }
 
         async function resetValues_txt() {
-            const OG_Record = await get_user(OG_codiceTessera);
+            const OG_Record = await get_book(OG_numeroInventario);
             if(!OG_Record) return;
 
-            let txtCodiceTessera = document.querySelector("#txtCodiceTessera");
-            txtCodiceTessera.value = OG_Record["record"]["codiceTessera"];
+            let txtNumeroInventario = document.querySelector("#txtNumeroInventario");
+            txtNumeroInventario.value = OG_Record["record"]["numeroInventario"];
 
-            let txtNomeUtente = document.querySelector("#txtNomeUtente");
-            txtNomeUtente.value = OG_Record["record"]["nome"];
+            let txtTitolo = document.querySelector("#txtTitolo");
+            txtTitolo.value = OG_Record["record"]["titolo"];
 
-            let txtCognomeUtente = document.querySelector("#txtCognomeUtente");
-            txtCognomeUtente.value = OG_Record["record"]["cognome"];
+            let txtISBN = document.querySelector("#txtISBN");
+            txtISBN.value = OG_Record["record"]["ISBN"];
 
-            let txtMail = document.querySelector("#txtMail");
-            txtMail.value = OG_Record["record"]["userMail"];
+            let txtNumeroScaffale = document.querySelector("#txtNumeroScaffale");
+            txtNumeroScaffale.value = OG_Record["record"]["numeroScaffale"];
 
-            let txtDataRegistrazione = document.querySelector("#txtDataRegistrazione");
-            txtDataRegistrazione.value = OG_Record["record"]["dataRegistrazione"];
+            let tableCodiceCategoria = document.querySelector("#tableCodiceCategoria");
+            tableCodiceCategoria.setRecordChecked(OG_Record["record"]["codiceCategoria"]);
 
-            let txtCodiceFiscale = document.querySelector("#txtCodiceFiscale");
-            txtCodiceFiscale.value = OG_Record["record"]["codiceFiscale"];
-
-            let tableIDAmministratore = document.querySelector("#tableIDAmministratore");
-            tableIDAmministratore.setRecordChecked(OG_Record["record"]["idAmministratore"]);
-
+            let tableCodiceAutore = document.querySelector("#tableCodiceAutore");
+            tableCodiceAutore.setRecordChecked(OG_Record["record"]["codiceAutore"]);
         }
 
         async function modifyRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=users";
-            const OG_Record = await get_user(OG_codiceTessera);
+            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=books";
+            const OG_Record = await get_book(OG_numeroInventario);
             if(!OG_Record) return;
 
-            let nomeUtente = document.querySelector("#txtNomeUtente").value;
-            let cognomeUtente = document.querySelector("#txtCognomeUtente").value;
-            let mailUtente = document.querySelector("#txtMail").value;
-            
-            if(OG_Record["record"]["userMail"] == mailUtente && OG_Record["record"]["nome"] == nomeUtente  && OG_Record["record"]["cognome"] == cognomeUtente) {
+            let titolo = document.querySelector("#txtTitolo").value;
+            let ISBN = document.querySelector("#txtISBN").value
+            let numeroScaffale = document.querySelector("#txtNumeroScaffale").value;
+            let codiceCategoria = document.querySelector("#tableCodiceCategoria").getRecordChecked();
+            let codiceAutore = document.querySelector("#tableCodiceAutore").getRecordChecked();
+
+            let atLeastOneModified = (OG_Record["record"]["titolo"] == titolo) && (OG_Record["record"]["ISBN"] == ISBN) && (OG_Record["record"]["numeroScaffale"] == numeroScaffale);
+            atLeastOneModified = atLeastOneModified && (OG_Record["record"]["codiceCategoria"] == codiceCategoria) && (OG_Record["record"]["codiceAutore"] == codiceAutore);
+
+            if(atLeastOneModified) {
                 new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
                 return;
             }
@@ -97,14 +97,17 @@
 
             toSend.append("adminUsername", session["username"]);
             toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["codiceTessera"]);
-            if(OG_Record["record"]["userMail"] != mailUtente) toSend.append("userMail", mailUtente);
-            if(OG_Record["record"]["nome"] != nomeUtente) toSend.append("nomeUtente", nomeUtente);
-            if(OG_Record["record"]["cognome"] != cognomeUtente) toSend.append("cognomeUtente", cognomeUtente);
+            toSend.append("originalPK", OG_Record["record"]["numeroInventario"]);
+            if(OG_Record["record"]["titolo"] != titolo) toSend.append("titolo", titolo);
+            if(OG_Record["record"]["ISBN"] != ISBN) toSend.append("ISBN", ISBN);
+            if(OG_Record["record"]["numeroScaffale"] != numeroScaffale) toSend.append("numeroScaffale", numeroScaffale);
+            if(OG_Record["record"]["codiceCategoria"] != codiceCategoria) toSend.append("codiceCategoria", codiceCategoria);
+            if(OG_Record["record"]["codiceAutore"] != codiceAutore) toSend.append("codiceAutore", codiceAutore);
 
             fetch(QUERY_PATH, { method: "POST", body: toSend })
             .then(response => response.text())
             .then(function (response) {
+                console.log(response);
                 let output = JSON.parse(response);
                 if(!output["authentication"]) {
                     new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
@@ -132,23 +135,27 @@
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
     <section class="default-container">
-        <span class="default-title">MODIFICA UTENTE</span>
-        <text-input type="text" placeholder="Codice tessera" id="txtCodiceTessera" read-only></text-input>
-        <text-input type="text" placeholder="Nome" id="txtNomeUtente"></text-input>
-        <text-input type="text" placeholder="Cognome" id="txtCognomeUtente"></text-input>
-        <text-input type="text" placeholder="E-Mail" id="txtMail" read-only></text-input>
-        <text-input type="text" placeholder="Data registrazione" id="txtDataRegistrazione" read-only></text-input>
-        <text-input type="text" placeholder="Codice fiscale" id="txtCodiceFiscale" read-only></text-input>
-        <database-table table-name="admins"
-        textbox-placeholder="ID Amministratore"
+        <span class="default-title">MODIFICA LIBRO</span>
+        <text-input type="text" placeholder="Numero inventario" id="txtNumeroInventario" read-only></text-input>
+        <text-input type="text" placeholder="Titolo" id="txtTitolo"></text-input>
+        <text-input type="text" placeholder="ISBN" id="txtISBN"></text-input>
+        <!-- <text-input type="text" placeholder="Editore" id="txtEditore"></text-input> -->
+        <text-input type="text" placeholder="Numero scaffale" id="txtNumeroScaffale"></text-input>
+        <database-table table-name="categories"
+        textbox-placeholder="Codice categoria"
         type="select"
-        read-only
-        id="tableIDAmministratore">
-            <database-column column-coding-name="idAmministratore" primary-key>ID AMMINISTRATORE</database-column>
-            <database-column column-coding-name="adminMail">E-MAIL</database-column>
+        id="tableCodiceCategoria">
+            <database-column column-coding-name="codiceCategoria" primary-key>CODICE CATEGORIA</database-column>
+            <database-column column-coding-name="descrizione">DESCRIZIONE</database-column>
+        </database-table>
+        <database-table table-name="authors" 
+        textbox-placeholder="Codice autore"
+        type="select"
+        id="tableCodiceAutore">
+            <database-column column-coding-name="codiceAutore" primary-key>CODICE AUTORE</database-column>
+            <database-column column-coding-name="nomeCompleto">NOME</database-column>
         </database-table>
 
-        
         <button class="personalized-button red-button" onclick="">RIGENERA PASSWORD</button>
         <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>
         <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button>

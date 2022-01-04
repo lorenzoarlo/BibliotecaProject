@@ -26,24 +26,24 @@
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
     <section class="default-container">
-        <database-table table-name="categories" 
-        title="ELENCO CATEGORIE" 
+        <span class="default-title">ELENCO CATEGORIE</span>
+        <database-table table-name="categories"
         textbox-placeholder="Cerca in categorie"
         destinationURL="AD_ModifyCategory.html">
             <database-column column-coding-name="codiceCategoria" primary-key>CODICE CATEGORIA</database-column>
             <database-column column-coding-name="descrizione">DESCRIZIONE</database-column>
         </database-table>
         <hr class="separation-line"/>
+        <span class="default-title">ELENCO AUTORI</span>
         <database-table table-name="authors" 
-        title="ELENCO AUTORI" 
         textbox-placeholder="Cerca in autori"
         destinationURL="AD_ModifyAuthor.html">
             <database-column column-coding-name="codiceAutore" primary-key>CODICE AUTORE</database-column>
             <database-column column-coding-name="nomeCompleto">NOME</database-column>
         </database-table>
         <hr class="separation-line"/>
+        <span class="default-title">ELENCO UTENTI</span>
         <database-table table-name="users" 
-        title="ELENCO UTENTI" 
         textbox-placeholder="Cerca in utenti"
         destinationURL="AD_ModifyUser.html">
             <database-column column-coding-name="codiceTessera" primary-key>CODICE TESSERA</database-column>
@@ -52,9 +52,10 @@
             <database-column column-coding-name="codiceFiscale">CODICE FISCALE</database-column>
         </database-table>
         <hr class="separation-line"/>
+        <span class="default-title">ELENCO LIBRI</span>
         <database-table table-name="books" 
-        title="ELENCO LIBRI"
-        textbox-placeholder="Cerca in libri">
+        textbox-placeholder="Cerca in libri"
+        destinationURL="AD_ModifyBook.html">
             <database-column column-coding-name="numeroInventario" primary-key>N° INVENTARIO</database-column>
             <database-column column-coding-name="titolo">TITOLO</database-column>
             <database-column column-coding-name="ISBN">ISBN</database-column>
@@ -63,9 +64,10 @@
             <database-column column-coding-name="numeroScaffale">SCAFFALE</database-column>
         </database-table>
         <hr class="separation-line"/>
+        <span class="default-title">ELENCO PRESTITI</span>
         <database-table table-name="loans" 
-        title="ELENCO PRESTITI" 
-        textbox-placeholder="Cerca in prestiti">
+        textbox-placeholder="Cerca in prestiti"
+        destinationURL="AD_ModifyLoan.html">
             <database-column column-coding-name="idPrestito" not-visible primary-key>ID PRESTITO</database-column>
             <database-column column-coding-name="codiceTessera">CODICE TESSERA</database-column>
             <database-column column-coding-name="nomeCompletoUtente">NOME UTENTE</database-column>
@@ -74,12 +76,11 @@
             <database-column column-coding-name="finePrestito">FINE PRESTITO</database-column>
         </database-table>
         <hr class="separation-line"/>
+        <span class="default-title">ELENCO AMMINISTRATORI</span>
         <database-table table-name="admins"
-        id="selectTableAmministratori"
-        type="select"
-        title="ELENCO AMMINISTRATORI" 
-        textbox-placeholder="Cerca in amministratori">
-            <database-column column-coding-name="idAmministratore" not-visible primary-key>ID AMMINISTRATORI</database-column>
+        textbox-placeholder="Cerca in amministratori"
+        destinationURL="AD_ModifyAdmin.html">
+            <database-column column-coding-name="idAmministratore" primary-key>ID AMMINISTRATORE</database-column>
             <database-column column-coding-name="adminMail">E-MAIL</database-column>
         </database-table>
     </section>

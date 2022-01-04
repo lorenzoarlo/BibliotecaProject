@@ -54,7 +54,8 @@
     function get_author($connection, $primaryKey) {
         $q = "SELECT autori.codAutore as codiceAutore,
         autori.nome, 
-        autori.cognome
+        autori.cognome,
+        CONCAT(autori.nome, ' ', autori.cognome) as nomeCompleto
         FROM autori
         WHERE codAutore = '$primaryKey';";
 
@@ -67,9 +68,15 @@
         libri.ISBN,
         libri.nScaffale as numeroScaffale, 
         libri.codCategoria as codiceCategoria, 
-        libri.codAutore as codiceAutore
+        libri.codAutore as codiceAutore,
+        categorie.descrizione as descrizioneCategoria, 
+        autori.nome, 
+        autori.cognome,
+        CONCAT(autori.nome, ' ', autori.cognome) as nomeCompletoAutore
         FROM libri
-        WHERE nInventario == '$primaryKey';";
+        NATURAL JOIN categorie
+        NATURAL JOIN autori
+        WHERE nInventario = $primaryKey;";
 
         return $connection->query($q);
     }
@@ -81,7 +88,8 @@
         utenti.user_mail as userMail, 
         utenti.codFiscale as codiceFiscale, 
         DATE_FORMAT(utenti.dataRegistr, '%d-%m-%Y') as dataRegistrazione, 
-        utenti.idAmministratore 
+        utenti.idAmministratore,
+        CONCAT(utenti.nome, ' ', utenti.cognome) as nomeCompleto
         FROM utenti
         WHERE codTessera = '$primaryKey';";
 
@@ -94,7 +102,7 @@
         prestiti.nInventario as numeroInventario,
         DATE_FORMAT(prestiti.inizioPrestito, '%d-%m-%Y') as inizioPrestito, 
         DATE_FORMAT(prestiti.finePrestito, '%d-%m-%Y') as finePrestito,
-        prestiti.classeAttuale, 
+        prestiti.classeAttuale
         FROM prestiti
         WHERE idPrestito = $primaryKey;";
 
