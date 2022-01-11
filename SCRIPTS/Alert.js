@@ -40,15 +40,14 @@ class Alert {
         
     }
 
-    SummonAlert(parent) {
+    async SummonAlert(parent) {
         parent.appendChild(this.blurredBackground);
         this.alertBox.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
         this.btn_closeAlert.addEventListener("click", () => {
 
             this.alertBox.animate(Alert.EXIT_AnimationKeyframe, Alert.EXIT_AnimationKeyframeProperties)
-            .onfinish = () => parent.removeChild(this.blurredBackground);
-            
-        })
+            .onfinish = () => parent.removeChild(this.blurredBackground); 
+        });
     }
 
 }

@@ -5,111 +5,58 @@
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
     <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
-        let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_codiceTessera = urlParams.get('codiceTessera');
+        const ORIGINAL_PK = urlParams.get('codiceTessera');
 
-        this.onload = function() {
-            alertContainer = document.querySelector(".default-container");
-            resetValues_txt();
+        async function resetFieldsValues() {
+            alertContainer = document.querySelector("alert-defaultContainer");
+
+            let response = await Utilities.GetRecordFromPrimaryKey("users", ORIGINAL_PK);
+            if(!response["record"]) {
+                new Alert("error", "Codice tessera non corretto!", true, alertContainer);
+                document.querySelectorAll("button").forEach(button => button.disabled = true);
+                return;
+            }
+
+            document.querySelector("#txtCodiceTessera").value = response["record"]["codiceTessera"];
+            document.querySelector("#txtNomeUtente").value = response["record"]["nomeUtente"];
+            document.querySelector("#txtCognomeUtente").value = response["record"]["cognomeUtente"];
+            document.querySelector("#txtMail").value = response["record"]["mailUtente"];
+            document.querySelector("#txtDataRegistrazione").value = response["record"]["dataRegistrazioneUtente"];
+            document.querySelector("#txtCodiceFiscale").value = response["record"]["codiceFiscale"];
+            document.querySelector("#tableIDAmministratore").setRecordChecked(response["record"]["idAmministratore"]);            
         }
 
-        function get_user(primaryKey) {
-            return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=users"
-                let toSend = new FormData();
-                toSend.append("primaryKey", primaryKey);
+        this.onload = () => resetFieldsValues();
 
-                fetch(QUERY_PATH, { method: "POST", body: toSend })
-                .then(response => response.text())
-                .then(function (response) {
-                    console.log(response);
-                    let output = JSON.parse(response);
-                    if(!output["record"]) {
-                        new Alert("error", "Codice tessera non corretto!", true, alertContainer);
-                        document.querySelectorAll("button").forEach(button => button.disabled = true);
-                    }
-                    resolve(output);
-                })
-                .catch(error => {
-                    new Alert("error", "Errore di connessione!", true, alertContainer);
-                })
-            });
-        }
+        async function updateRecords() {
+            let fields = [];
 
-        async function resetValues_txt() {
-            const OG_Record = await get_user(OG_codiceTessera);
-            if(!OG_Record) return;
-
-            let txtCodiceTessera = document.querySelector("#txtCodiceTessera");
-            txtCodiceTessera.value = OG_Record["record"]["codiceTessera"];
-
-            let txtNomeUtente = document.querySelector("#txtNomeUtente");
-            txtNomeUtente.value = OG_Record["record"]["nomeUtente"];
-
-            let txtCognomeUtente = document.querySelector("#txtCognomeUtente");
-            txtCognomeUtente.value = OG_Record["record"]["cognomeUtente"];
-
-            let txtMail = document.querySelector("#txtMail");
-            txtMail.value = OG_Record["record"]["mailUtente"];
-
-            let txtDataRegistrazione = document.querySelector("#txtDataRegistrazione");
-            txtDataRegistrazione.value = OG_Record["record"]["dataRegistrazioneUtente"];
-
-            let txtCodiceFiscale = document.querySelector("#txtCodiceFiscale");
-            txtCodiceFiscale.value = OG_Record["record"]["codiceFiscale"];
-
-            let tableIDAmministratore = document.querySelector("#tableIDAmministratore");
-            tableIDAmministratore.setRecordChecked(OG_Record["record"]["idAmministratore"]);
-
-        }
-
-        async function modifyRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=users";
-            const OG_Record = await get_user(OG_codiceTessera);
-            if(!OG_Record) return;
+            let originalResponse = await Utilities.GetRecordFromPrimaryKey("users", ORIGINAL_PK);
+            if(!originalResponse["record"]) return;
 
             let nomeUtente = document.querySelector("#txtNomeUtente").value;
             let cognomeUtente = document.querySelector("#txtCognomeUtente").value;
             let mailUtente = document.querySelector("#txtMail").value;
-            
-            if(OG_Record["record"]["mailUtente"] == mailUtente && OG_Record["record"]["nomeUtente"] == nomeUtente  && OG_Record["record"]["cognome"] == cognomeUtente) {
-                new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
-                return;
-            }
 
-            let session = Utilities.GetSession();
-
-            let toSend = new FormData();
-
-            toSend.append("adminUsername", session["username"]);
-            toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["codiceTessera"]);
-            if(OG_Record["record"]["mailUtente"] != mailUtente) toSend.append("mailUtente", mailUtente);
-            if(OG_Record["record"]["nomeUtente"] != nomeUtente) toSend.append("nomeUtente", nomeUtente);
-            if(OG_Record["record"]["cognomeUtente"] != cognomeUtente) toSend.append("cognomeUtente", cognomeUtente);
-
-            fetch(QUERY_PATH, { method: "POST", body: toSend })
-            .then(response => response.text())
-            .then(function (response) {
-                let output = JSON.parse(response);
-                if(!output["authentication"]) {
-                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
-                    return;
-                }
-
-                if(output["uniqueField-collision"]) {
-                    new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
-                    return;
-                }
-
-                if(output["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
+            if(originalResponse["record"]["nomeUtente"] != nomeUtente) fields.push({
+                name: "nomeUtente",
+                value: nomeUtente
             });
+
+            if(originalResponse["record"]["cognomeUtente"] != cognomeUtente) fields.push({
+                name: "cognomeUtente",
+                value: cognomeUtente
+            });
+
+            if(originalResponse["record"]["mailUtente"] != mailUtente) fields.push({
+                name: "mailUtente",
+                value: mailUtente
+            });
+
+            let updated = await Utilities.ModifyRecord("users", ORIGINAL_PK, fields);
+            if(updated) Utilities.ReindirizzaTo("AD_Tables.html");
         }
-
-        
-
-
     </script>
     <title>Biblioteca I.T.T.S.</title>
 </head>
@@ -118,7 +65,7 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <section class="default-container">
+    <section class="default-container alert-defaultContainer">
         <span class="default-title">MODIFICA UTENTE</span>
         <text-input type="text" placeholder="Codice tessera" id="txtCodiceTessera" read-only></text-input>
         <text-input type="text" placeholder="Nome" id="txtNomeUtente"></text-input>
@@ -136,8 +83,8 @@
         </database-table>
         
         <button class="personalized-button red-button" onclick="">RIGENERA PASSWORD</button>
-        <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>
-        <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button>
+        <button class="personalized-button orange-button" onclick="updateRecords()">MODIFICA CAMPI</button>
+        <button class="personalized-button green-button" onclick="resetFieldsValues()">RIPRISTINA AI VALORI INIZIALI</button>
     </section>
     <script src="../SCRIPTS/TextInput.js"></script>
     <script src="../SCRIPTS/DatabaseTable.js"></script>

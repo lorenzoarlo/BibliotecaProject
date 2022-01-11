@@ -5,99 +5,55 @@
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
     <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
-        let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_codiceAutore = urlParams.get('codiceAutore');
+        const ORIGINAL_PK = urlParams.get('codiceAutore');
 
-        this.onload = function() {
-            alertContainer = document.querySelector(".default-container");
-            resetValues_txt();
+        async function resetFieldsValues() {
+            alertContainer = document.querySelector("alert-defaultContainer");
+
+            let response = await Utilities.GetRecordFromPrimaryKey("authors", ORIGINAL_PK);
+            if(!response["record"]) {
+                new Alert("error", "Codice autore non corretto!", true, alertContainer);
+                document.querySelectorAll("button").forEach(button => button.disabled = true);
+                return;
+            }
+
+            document.querySelector("#txtCodiceAutore").value = response["record"]["codiceAutore"];
+            document.querySelector("#txtNomeAutore").value = response["record"]["nomeAutore"];
+            document.querySelector("#txtCognomeAutore").value = response["record"]["cognomeAutore"];
         }
 
-        function get_author(primaryKey) {
-            return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=authors"
-                let toSend = new FormData();
-                toSend.append("primaryKey", primaryKey);
 
-                fetch(QUERY_PATH, { method: "POST", body: toSend })
-                .then(response => response.text())
-                .then(function (response) {
-                    let output = JSON.parse(response);
-                    if(!output["record"]) {
-                        new Alert("error", "Codice autore non corretto!", true, alertContainer);
-                        document.querySelectorAll("button").forEach(button => button.disabled = true);
-                    }
-                    resolve(output);
-                })
-                .catch(error => {
-                    new Alert("error", "Errore di connessione!", true, alertContainer);
-                })
-            });
-        }
+        this.onload = () => resetFieldsValues();
 
-        async function resetValues_txt() {
-            const OG_Record = await get_author(OG_codiceAutore);
-            if(!OG_Record) return;
+        async function updateRecords() {
+            let fields = [];
 
-            let txtCodiceAutore = document.querySelector("#txtCodiceAutore");
-            txtCodiceAutore.value = OG_Record["record"]["codiceAutore"];
-
-            let txtNomeAutore = document.querySelector("#txtNomeAutore");
-            txtNomeAutore.value = OG_Record["record"]["nomeAutore"];
-
-            let txtCognomeAutore = document.querySelector("#txtCognomeAutore");
-            txtCognomeAutore.value = OG_Record["record"]["cognomeAutore"];
-
-        }
-
-        async function modifyRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=authors";
-            const OG_Record = await get_author(OG_codiceAutore);
-            if(!OG_Record) return;
+            let originalResponse = await Utilities.GetRecordFromPrimaryKey("authors", ORIGINAL_PK);
+            if(!originalResponse["record"]) return;
 
             let codiceAutore = document.querySelector("#txtCodiceAutore").value;
             let nomeAutore = document.querySelector("#txtNomeAutore").value;
             let cognomeAutore = document.querySelector("#txtCognomeAutore").value;
 
-            if(OG_Record["record"]["codiceAutore"] == codiceAutore && OG_Record["record"]["nomeAutore"] == nomeAutore && OG_Record["record"]["cognomeAutore"] == cognomeAutore) {
-                new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
-                return;
-            }
-
-            let session = Utilities.GetSession();
-
-            let toSend = new FormData();
-
-            toSend.append("adminUsername", session["username"]);
-            toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["codiceAutore"]);
-            if(OG_Record["record"]["codiceAutore"] != codiceAutore) toSend.append("codiceAutore", codiceAutore);
-            if(OG_Record["record"]["nomeAutore"] != nomeAutore) toSend.append("nomeAutore", nomeAutore);
-            if(OG_Record["record"]["cognomeAutore"] != cognomeAutore) toSend.append("cognomeAutore", cognomeAutore);
-
-            fetch(QUERY_PATH, { method: "POST", body: toSend })
-            .then(response => response.text())
-            .then(function (response) {
-                console.log(response);
-                let output = JSON.parse(response);
-                if(!output["authentication"]) {
-                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
-                    return;
-                }
-
-                if(output["uniqueField-collision"]) {
-                    new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
-                    return;
-                }
-
-                if(output["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
+            if(originalResponse["record"]["codiceAutore"] != codiceAutore) fields.push({
+                name: "codiceAutore",
+                value: codiceAutore
             });
+
+            if(originalResponse["record"]["nomeAutore"] != nomeAutore) fields.push({
+                name: "nomeAutore",
+                value: nomeAutore
+            });
+
+            if(originalResponse["record"]["cognomeAutore"] != cognomeAutore) fields.push({
+                name: "cognomeAutore",
+                value: cognomeAutore
+            });
+
+            let updated = await Utilities.ModifyRecord("authors", ORIGINAL_PK, fields);
+            if(updated) Utilities.ReindirizzaTo("AD_Tables.html");
         }
-
-        
-
-
     </script>
     <title>Biblioteca I.T.T.S.</title>
 </head>
@@ -106,13 +62,13 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <section class="default-container">
+    <section class="default-container alert-defaultContainer">
         <span class="default-title">MODIFICA AUTORE</span>
         <text-input type="text" placeholder="Codice autore" id="txtCodiceAutore"></text-input>
         <text-input type="text" placeholder="Nome" id="txtNomeAutore"></text-input>
         <text-input type="text" placeholder="Cognome" id="txtCognomeAutore"></text-input>
-        <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>
-        <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button>
+        <button class="personalized-button orange-button" onclick="updateRecords()">MODIFICA CAMPI</button>
+        <button class="personalized-button green-button" onclick="resetFieldsValues()">RIPRISTINA AI VALORI INIZIALI</button>
     </section>
     <script src="../SCRIPTS/TextInput.js"></script>
 </body>

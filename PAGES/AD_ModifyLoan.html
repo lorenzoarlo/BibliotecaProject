@@ -5,103 +5,52 @@
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
     <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
-        let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_IDPrestito = urlParams.get('idPrestito');
+        const ORIGINAL_PK = urlParams.get('idPrestito');
 
-        this.onload = function() {
-            alertContainer = document.querySelector(".default-container");
-            resetValues_txt();
-        }
+        async function resetFieldsValues() {
+            alertContainer = document.querySelector("alert-defaultContainer");
 
-        function get_loan(primaryKey) {
-            return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=loans"
-                let toSend = new FormData();
-                toSend.append("primaryKey", primaryKey);
-
-                fetch(QUERY_PATH, { method: "POST", body: toSend })
-                .then(response => response.text())
-                .then(function (response) {
-
-                    console.log(response);
-                    let output = JSON.parse(response);
-                    if(!output["record"]) {
-                        new Alert("error", "ID Prestito non corretto!", true, alertContainer);
-                        document.querySelectorAll("button").forEach(button => button.disabled = true);
-                    }
-                    resolve(output);
-                })
-                .catch(error => {
-                    new Alert("error", "Errore di connessione!", true, alertContainer);
-                })
-            });
-        }
-
-        async function resetValues_txt() {
-            const OG_Record = await get_loan(OG_IDPrestito);
-            if(!OG_Record) return;
-
-            let txtIDPrestito = document.querySelector("#txtIDPrestito");
-            txtIDPrestito.value = OG_Record["record"]["idPrestito"];
-
-            let tableCodiceTessera = document.querySelector("#tableCodiceTessera");
-            tableCodiceTessera.setRecordChecked(OG_Record["record"]["codiceTessera"]);
-
-            let tableNInventario = document.querySelector("#tableNInventario");
-            tableNInventario.setRecordChecked(OG_Record["record"]["numeroInventario"]);
-
-            let txtInizioPrestito = document.querySelector("#txtInizioPrestito");
-            txtInizioPrestito.value = OG_Record["record"]["inizioPrestito"];
-
-            let txtFinePrestito = document.querySelector("#txtFinePrestito");
-            txtFinePrestito.value = OG_Record["record"]["finePrestito"];
-            document.querySelector("#btnTerminaPrestito").disabled = (txtFinePrestito.value != "");
-
-
-            let txtClasseAttuale = document.querySelector("#txtClasseAttuale");
-            txtClasseAttuale.value = OG_Record["record"]["classeAttuale"];
-
-        }
-
-        async function modifyRecord(finePrestito = false) {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=loans";
-            const OG_Record = await get_loan(OG_IDPrestito);
-            if(!OG_Record) return;
-
-            let classeAttuale = document.querySelector("#txtClasseAttuale").value;
-
-            if(OG_Record["record"]["classeAttuale"] == classeAttuale && !finePrestito) {
-                new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
+            let response = await Utilities.GetRecordFromPrimaryKey("loans", ORIGINAL_PK);
+            if(!response["record"]) {
+                new Alert("error", "ID Prestito non corretto!", true, alertContainer);
+                document.querySelectorAll("button").forEach(button => button.disabled = true);
                 return;
             }
 
-            let session = Utilities.GetSession();
+            document.querySelector("#txtIDPrestito").value = response["record"]["idPrestito"];
+            document.querySelector("#tableCodiceTessera").setRecordChecked(response["record"]["codiceTessera"]);
+            document.querySelector("#tableNumeroInventario").setRecordChecked(response["record"]["numeroInventario"]);
+            document.querySelector("#txtInizioPrestito").value = response["record"]["inizioPrestito"];
+            document.querySelector("#txtFinePrestito").value = response["record"]["finePrestito"];
+            document.querySelector("#btnTerminaPrestito").disabled = (document.querySelector("#txtFinePrestito").value != "");
+            document.querySelector("#txtClasseAttuale").value = response["record"]["classeAttuale"];
+        }
 
-            let toSend = new FormData();
 
-            toSend.append("adminUsername", session["username"]);
-            toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["idPrestito"]);
-            if(OG_Record["record"]["classeAttuale"] != classeAttuale) toSend.append("classeAttuale", classeAttuale);
-            if(finePrestito) toSend.append("finePrestito", "true");
+        this.onload = () => resetFieldsValues();
 
-            fetch(QUERY_PATH, { method: "POST", body: toSend })
-            .then(response => response.text())
-            .then(function (response) {
-                let output = JSON.parse(response);
-                if(!output["authentication"]) {
-                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
-                    return;
-                }
+        async function updateRecords(finePrestito = false) {
+            let fields = [];
 
-                if(output["uniqueField-collision"]) {
-                    new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
-                    return;
-                }
+            let originalResponse = await Utilities.GetRecordFromPrimaryKey("loans", ORIGINAL_PK);
+            if(!originalResponse["record"]) return;
 
-                if(output["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
+            
+            let classeAttuale = document.querySelector("#txtClasseAttuale").value;
+
+            if(originalResponse["record"]["classeAttuale"] != classeAttuale) fields.push({
+                name: "classeAttuale",
+                value: classeAttuale
             });
+
+            if(finePrestito) fields.push({
+                name: "finePrestito",
+                value: "true"
+            });
+
+            let updated = await Utilities.ModifyRecord("loans", ORIGINAL_PK, fields);
+            if(updated) Utilities.ReindirizzaTo("AD_Tables.html");
         }
 
         
@@ -115,7 +64,7 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <section class="default-container">
+    <section class="default-container alert-defaultContainer">
         <span class="default-title">MODIFICA PRESTITO</span>
         <text-input type="text" placeholder="ID Prestito" id="txtIDPrestito" read-only></text-input>
         <database-table table-name="users" 
@@ -131,7 +80,7 @@
         <database-table table-name="books" 
         textbox-placeholder="N° inventario libro"
         type="select"
-        id="tableNInventario"
+        id="tableNumeroInventario"
         read-only>
             <database-column column-coding-name="numeroInventario" primary-key>N° INVENTARIO</database-column>
             <database-column column-coding-name="titolo">TITOLO</database-column>
@@ -145,9 +94,9 @@
         <text-input type="text" placeholder="Classe attuale" id="txtClasseAttuale"></text-input>
         
 
-        <button class="personalized-button red-button" id="btnTerminaPrestito" onclick="modifyRecord(true)">TERMINA PRESTITO</button>
-        <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>
-        <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button>
+        <button class="personalized-button red-button" id="btnTerminaPrestito" onclick="updateRecords(true)">TERMINA PRESTITO</button>
+        <button class="personalized-button orange-button" onclick="updateRecords()">MODIFICA CAMPI</button>
+        <button class="personalized-button green-button" onclick="resetFieldsValues()">RIPRISTINA AI VALORI INIZIALI</button>
     </section>
     <script src="../SCRIPTS/TextInput.js"></script>
     <script src="../SCRIPTS/DatabaseTable.js"></script>

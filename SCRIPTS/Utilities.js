@@ -102,25 +102,32 @@ class Utilities {
             toSend.append(field.name, field.value); 
         });
 
+        let toReturn = false;
         return new Promise(resolve => {
             fetch(fetchURL, { method: "POST", body: toSend})
             .then(response => response.text())
-            .then(text => {
+            .then( text => {
                 let response = JSON.parse(text);
                 if(!response["authentication"]) {
                     new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
+                    resolve(false);
                     return;
                 }
 
                 if(response["uniqueField-collision"]) {
                     new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
+                    resolve(false);
                     return;
                 }
 
                 if(response["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
+                
+
+                resolve(response["updated"]);
             })
             .catch(error => {
                 new Alert("error",  "Errore di connessione!", true, alertContainer);
+                resolve(false);
             });
 
         });

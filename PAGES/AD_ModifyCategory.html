@@ -6,87 +6,47 @@
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
     <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
-        let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_codiceCategoria = urlParams.get('codiceCategoria');
+        const ORIGINAL_PK = urlParams.get('codiceCategoria');
 
-        this.onload = function() {
-            alertContainer = document.querySelector(".default-container");
-            resetValues_txt();
+        async function resetFieldsValues() {
+            alertContainer = document.querySelector("alert-defaultContainer");
+
+            let response = await Utilities.GetRecordFromPrimaryKey("categories", ORIGINAL_PK);
+            if(!response["record"]) {
+                new Alert("error", "Codice categoria non corretto!", true, alertContainer);
+                document.querySelectorAll("button").forEach(button => button.disabled = true);
+                return;
+            }
+
+            document.querySelector("#txtCodiceCategoria").value = response["record"]["codiceCategoria"];
+            document.querySelector("#txtDescrizioneCategoria").value = response["record"]["descrizioneCategoria"];
         }
 
-        function get_category(primaryKey) {
-            return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=categories"
-                let toSend = new FormData();
-                toSend.append("primaryKey", primaryKey);
 
-                fetch(QUERY_PATH, { method: "POST", body: toSend })
-                .then(response => response.text())
-                .then(function (response) {
-                    let output = JSON.parse(response);
-                    if(!output["record"]) {
-                        new Alert("error", "Codice categoria non corretto!", true, alertContainer);
-                        document.querySelectorAll("button").forEach(button => button.disabled = true);
-                    }
-                    resolve(output);
-                })
-                .catch(error => {
-                    new Alert("error", "Errore di connessione!", true, alertContainer);
-                })
-            });
-        }
+        this.onload = () => resetFieldsValues();
 
-        async function resetValues_txt() {
-            const OG_Record = await get_category(OG_codiceCategoria);
-            if(!OG_Record) return;
+        async function updateRecords() {
+            let fields = [];
 
-            let txtCodiceCategoria = document.querySelector("#txtCodiceCategoria");
-            txtCodiceCategoria.value = OG_Record["record"]["codiceCategoria"];
-
-            let txtDescrizioneCategoria = document.querySelector("#txtDescrizioneCategoria");
-            txtDescrizioneCategoria.value = OG_Record["record"]["descrizioneCategoria"];
-        }
-
-        async function modifyRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=categories";
-            const OG_Record = await get_category(OG_codiceCategoria);
-            if(!OG_Record) return;
+            let originalResponse = await Utilities.GetRecordFromPrimaryKey("categories", ORIGINAL_PK);
+            if(!originalResponse["record"]) return;
 
             let codiceCategoria = document.querySelector("#txtCodiceCategoria").value;
             let descrizioneCategoria = document.querySelector("#txtDescrizioneCategoria").value;
 
-            if(OG_Record["record"]["codiceCategoria"] == codiceCategoria && OG_Record["record"]["descrizioneCategoria"] == descrizioneCategoria) {
-                new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
-                return;
-            }
-
-            let session = Utilities.GetSession();
-
-            let toSend = new FormData();
-
-            toSend.append("adminUsername", session["username"]);
-            toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["codiceCategoria"]);
-            if(OG_Record["record"]["codiceCategoria"] != codiceCategoria) toSend.append("codiceCategoria", codiceCategoria);
-            if(OG_Record["record"]["descrizioneCategoria"] != descrizioneCategoria) toSend.append("descrizioneCategoria", descrizioneCategoria);
-
-            fetch(QUERY_PATH, { method: "POST", body: toSend })
-            .then(response => response.text())
-            .then(function (response) {
-                let output = JSON.parse(response);
-                if(!output["authentication"]) {
-                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
-                    return;
-                }
-
-                if(output["uniqueField-collision"]) {
-                    new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
-                    return;
-                }
-
-                if(output["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
+            if(originalResponse["record"]["codiceCategoria"] != codiceCategoria) fields.push({
+                name: "codiceCategoria",
+                value: codiceCategoria
             });
+
+            if(originalResponse["record"]["descrizioneCategoria"] != descrizioneCategoria) fields.push({
+                name: "descrizioneCategoria",
+                value: descrizioneCategoria
+            });
+
+            let updated = await Utilities.ModifyRecord("categories", ORIGINAL_PK, fields);
+            if(updated) Utilities.ReindirizzaTo("AD_Tables.html");
         }
 
         
@@ -100,12 +60,12 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <section class="default-container">
+    <section class="default-container alert-defaultContainer">
         <span class="default-title">MODIFICA CATEGORIA</span>
         <text-input type="text" placeholder="Codice categoria" id="txtCodiceCategoria"></text-input>
         <text-input type="text" placeholder="Descrizione categoria" id="txtDescrizioneCategoria"></text-input>
-        <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>
-        <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button>
+        <button class="personalized-button orange-button" onclick="updateRecords()">MODIFICA CAMPI</button>
+        <button class="personalized-button green-button" onclick="resetFieldsValues()">RIPRISTINA AI VALORI INIZIALI</button>
     </section>
     <script src="../SCRIPTS/TextInput.js"></script>
 </body>

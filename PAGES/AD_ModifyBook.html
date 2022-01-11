@@ -5,114 +5,77 @@
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
     <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
-        let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_numeroInventario = urlParams.get('numeroInventario');
+        const ORIGINAL_PK = urlParams.get('numeroInventario');
 
-        this.onload = function() {
-            alertContainer = document.querySelector(".default-container");
-            resetValues_txt();
+        async function resetFieldsValues() {
+            alertContainer = document.querySelector("alert-defaultContainer");
+
+            let response = await Utilities.GetRecordFromPrimaryKey("books", ORIGINAL_PK);
+            if(!response["record"]) {
+                new Alert("error", "Numero inventario non corretto!", true, alertContainer);
+                document.querySelectorAll("button").forEach(button => button.disabled = true);
+                return;
+            }
+
+            document.querySelector("#txtNumeroInventario").value = response["record"]["numeroInventario"];
+            document.querySelector("#txtTitolo").value = response["record"]["titolo"];
+            // document.querySelector("#txtEditore").value = response["record"]["editore"];
+            document.querySelector("#txtISBN").value = response["record"]["ISBN"];
+            document.querySelector("#txtNumeroScaffale").value = response["record"]["numeroScaffale"];
+            document.querySelector("#tableCodiceCategoria").setRecordChecked(response["record"]["codiceCategoria"]);
+            document.querySelector("#tableCodiceAutore").setRecordChecked(response["record"]["codiceAutore"]);
         }
 
-        function get_book(primaryKey) {
-            return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=books"
-                let toSend = new FormData();
-                toSend.append("primaryKey", primaryKey);
 
-                fetch(QUERY_PATH, { method: "POST", body: toSend })
-                .then(response => response.text())
-                .then(function (response) {
-                    let output = JSON.parse(response);
-                    if(!output["record"]) {
-                        new Alert("error", "Numero inventario non corretto!", true, alertContainer);
-                        document.querySelectorAll("button").forEach(button => button.disabled = true);
-                    }
-                    resolve(output);
-                })
-                .catch(error => {
-                    new Alert("error", "Errore di connessione!", true, alertContainer);
-                })
-            });
-        }
+        this.onload = () => resetFieldsValues();
 
-        async function resetValues_txt() {
-            const OG_Record = await get_book(OG_numeroInventario);
-            if(!OG_Record) return;
+        async function updateRecords() {
+            let fields = [];
 
-            let txtNumeroInventario = document.querySelector("#txtNumeroInventario");
-            txtNumeroInventario.value = OG_Record["record"]["numeroInventario"];
+            let originalResponse = await Utilities.GetRecordFromPrimaryKey("books", ORIGINAL_PK);
+            if(!originalResponse["record"]) return;
 
-            let txtTitolo = document.querySelector("#txtTitolo");
-            txtTitolo.value = OG_Record["record"]["titolo"];
-
-            let txtISBN = document.querySelector("#txtISBN");
-            txtISBN.value = OG_Record["record"]["ISBN"];
-
-            let txtNumeroScaffale = document.querySelector("#txtNumeroScaffale");
-            txtNumeroScaffale.value = OG_Record["record"]["numeroScaffale"];
-
-            let tableCodiceCategoria = document.querySelector("#tableCodiceCategoria");
-            tableCodiceCategoria.setRecordChecked(OG_Record["record"]["codiceCategoria"]);
-
-            let tableCodiceAutore = document.querySelector("#tableCodiceAutore");
-            tableCodiceAutore.setRecordChecked(OG_Record["record"]["codiceAutore"]);
-        }
-
-        async function modifyRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=books";
-            const OG_Record = await get_book(OG_numeroInventario);
-            if(!OG_Record) return;
-
-            let titolo = document.querySelector("#txtTitolo").value;
-            let ISBN = document.querySelector("#txtISBN").value
+            let titolo =  document.querySelector("#txtTitolo").value;
+            let ISBN = document.querySelector("#txtISBN").value;
+            // let editore = document.querySelector("#txtEditore").value;
             let numeroScaffale = document.querySelector("#txtNumeroScaffale").value;
             let codiceCategoria = document.querySelector("#tableCodiceCategoria").getRecordChecked();
             let codiceAutore = document.querySelector("#tableCodiceAutore").getRecordChecked();
 
-            let atLeastOneModified = (OG_Record["record"]["titolo"] == titolo) && (OG_Record["record"]["ISBN"] == ISBN) && (OG_Record["record"]["numeroScaffale"] == numeroScaffale);
-            atLeastOneModified = atLeastOneModified && (OG_Record["record"]["codiceCategoria"] == codiceCategoria) && (OG_Record["record"]["codiceAutore"] == codiceAutore);
-
-            if(atLeastOneModified) {
-                new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
-                return;
-            }
-
-            let session = Utilities.GetSession();
-
-            let toSend = new FormData();
-
-            toSend.append("adminUsername", session["username"]);
-            toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["numeroInventario"]);
-            if(OG_Record["record"]["titolo"] != titolo) toSend.append("titolo", titolo);
-            if(OG_Record["record"]["ISBN"] != ISBN) toSend.append("ISBN", ISBN);
-            if(OG_Record["record"]["numeroScaffale"] != numeroScaffale) toSend.append("numeroScaffale", numeroScaffale);
-            if(OG_Record["record"]["codiceCategoria"] != codiceCategoria) toSend.append("codiceCategoria", codiceCategoria);
-            if(OG_Record["record"]["codiceAutore"] != codiceAutore) toSend.append("codiceAutore", codiceAutore);
-
-            fetch(QUERY_PATH, { method: "POST", body: toSend })
-            .then(response => response.text())
-            .then(function (response) {
-                console.log(response);
-                let output = JSON.parse(response);
-                if(!output["authentication"]) {
-                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
-                    return;
-                }
-
-                if(output["uniqueField-collision"]) {
-                    new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
-                    return;
-                }
-
-                if(output["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
+            if(originalResponse["record"]["titolo"] != titolo) fields.push({
+                name: "titolo",
+                value: titolo
             });
+
+            if(originalResponse["record"]["ISBN"] != ISBN) fields.push({
+                name: "ISBN",
+                value: ISBN
+            });
+            
+            // if(originalResponse["record"]["editore"] != editore) fields.push({
+            //     name: "editore",
+            //     value: editore
+            // });
+
+            if(originalResponse["record"]["numeroScaffale"] != numeroScaffale) fields.push({
+                name: "numeroScaffale",
+                value: numeroScaffale
+            });
+
+            if(originalResponse["record"]["codiceCategoria"] != codiceCategoria) fields.push({
+                name: "codiceCategoria",
+                value: codiceCategoria
+            });
+
+            if(originalResponse["record"]["codiceAutore"] != codiceAutore) fields.push({
+                name: "codiceAutore",
+                value: codiceAutore
+            });
+
+            let updated = await Utilities.ModifyRecord("books", ORIGINAL_PK, fields);
+            if(updated) Utilities.ReindirizzaTo("AD_Tables.html");
         }
-
-        
-
-
     </script>
     <title>Biblioteca I.T.T.S.</title>
 </head>
@@ -121,7 +84,7 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <section class="default-container">
+    <section class="default-container alert-defaultContainer">
         <span class="default-title">MODIFICA LIBRO</span>
         <text-input type="text" placeholder="Numero inventario" id="txtNumeroInventario" read-only></text-input>
         <text-input type="text" placeholder="Titolo" id="txtTitolo"></text-input>

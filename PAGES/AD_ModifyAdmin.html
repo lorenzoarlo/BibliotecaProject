@@ -38,10 +38,9 @@
                 value: mailAmministratore
             });
 
-            Utilities.ModifyRecord("admins", ORIGINAL_PK, fields);
+            let updated = await Utilities.ModifyRecord("admins", ORIGINAL_PK, fields);
+            if(updated) Utilities.ReindirizzaTo("AD_Tables.html");
         }
-
-
     </script>
     <title>Biblioteca I.T.T.S.</title>
 </head>
