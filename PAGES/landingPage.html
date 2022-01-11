@@ -2,21 +2,44 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../STYLES/main-style.css" />
+    <script src="../SCRIPTS/IncludeFiles.js"></script>
     <link rel="stylesheet" href="../STYLES/landingPage-style.css" />
-    <link rel="stylesheet" href="../STYLES/input-style.css" />
-    <link rel="stylesheet" href="../STYLES/Alert-style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
-    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="../SCRIPTS/Utilities.js"></script>
-    <script src="../SCRIPTS/Alert.js"></script>
+    <script>
+        async function btnLogin_onclick(event) {
+        const loginButton = event.srcElement;
+    
+        let toSend = new FormData();
+        let loginUsername = document.querySelector("#txtUsername").value;
+        let loginPassword = document.querySelector("#txtPassword").value;
+        toSend.append("loginUsername", loginUsername);
+        toSend.append("loginPassword", loginPassword);
+    
+        loginButton.disabled = true;
+
+        let response = await Utilities.FetchToPromise("../PHP_QUERIES/phpFunction-Login.php", toSend);
+        
+        const alert_defaultContainer = document.querySelector(".alert-defaultContainer");
+
+        if(response["authentication"]) {
+            let newURL = null;
+            if(response["user-type"] == "amministratore") newURL = "AD_PersonalArea.html";
+            else if(response["user-type"] == "utente") newURL = "US_PersonalArea.html";
+            
+            Utilities.SetSession(response["primary-key"], loginUsername, loginPassword);
+            if(newURL) Utilities.ReindirizzaTo(newURL);
+        }
+
+        if(!response["authentication"]) {
+            new Alert("error",
+            "Errore di autenticazione! Credenziali non corrette!",
+            true,
+            alert_defaultContainer
+            );
+        }
+
+        loginButton.disabled = false;
+    }
+    </script>
     <title>Biblioteca I.T.T.S.</title>
 </head>
 <body>
@@ -29,11 +52,11 @@
             <word>"Inserire una citazione commovente ;)"</word>
         </typewriting-text>
     </section>
-    <section class="loginForm-container">
+    <section class="loginForm-container alert-defaultContainer">
         <span class="login-title">ACCEDI ALLA TUA AREA PERSONALE</span>
         <text-input type="text" placeholder="E-mail o codice tessera" id="txtUsername"></text-input>
         <text-input type="password" placeholder="Password" id="txtPassword"></text-input>
-        <button type="submit" class="personalized-button green-button" onclick="Utilities.do_login(event)">LOGIN</button>
+        <button type="button" class="personalized-button green-button" onclick="btnLogin_onclick(event)">LOGIN</button>
     </section>
     <!-- <section class="rules-container"></section> -->
     <footer class="credits-container">
@@ -44,7 +67,6 @@
             <word>Marcatelli Francesco</word>
         </typewriting-text>
     </footer>
-
     <script src="../SCRIPTS/TextInput.js"></script>
     <script src="../SCRIPTS/TypewritingText.js"></script>
 </body>

@@ -12,44 +12,6 @@ class Utilities {
         return {primaryKey: session_primaryKey, username: session_username, password: session_password};
     }
 
-    static do_login(e) {
-        let submitter = e.srcElement;
-    
-        let toSend = new FormData();
-        let username = document.querySelector("#txtUsername").value;
-        let password = document.querySelector("#txtPassword").value;
-        toSend.append("username", username);
-        toSend.append("password", password);
-    
-        submitter.disabled = true;
-    
-        fetch("../PHP_QUERIES/phpFunction-Login.php", { method: "POST", body: toSend })
-            .then((response) => response.text())
-            .then(function (response) {
-                let output = JSON.parse(response);
-                if (output["authentication"]) {
-                    let newURL = (output["user-type"] == "admin") ? "AD_PersonalArea.html" : "US_PersonalArea.html";
-                    console.log(output);
-                    Utilities.SetSession(output["primary-key"], username, password);
-                    Utilities.ReindirizzaTo(newURL);
-                } else {
-                    new Alert("error",  
-                    "Errore di autenticazione! Credenziali non corrette!",
-                    true,
-                    document.querySelector(".loginForm-container"));
-                }
-            })
-            .catch(error => {
-                new Alert("error",  
-                    "Errore di connessione!",
-                    true,
-                    document.querySelector(".loginForm-container"));  
-            })
-            .finally(function() {
-                submitter.disabled = false;
-            });   
-    }
-
     static ReindirizzaTo(newURL) {
         window.location.href = newURL;
     }
@@ -58,7 +20,62 @@ class Utilities {
         while (element.firstChild) element.removeChild(element.lastChild);
     }
 
-    static ResetPaginationDatabaseTable(containerID) {
-        document.querySelector(`#${containerID} .table-navigator .result-pages`).dataset.offset = 0;
+    static FetchToPromise(fetchURL, fetchBody, finallyFunction = null, errorFunction = null, errorContainer = null) {
+        errorContainer = (errorContainer) ? errorContainer :  document.querySelector(".alert-defaultContainer");
+
+        return new Promise(resolve => {
+            fetch(fetchURL, { method: "POST", body: fetchBody})
+            .then(response => response.text())
+            .then(text => {
+                let toReturn = JSON.parse(text);
+                resolve(toReturn);
+            })
+            .catch(error => {
+                if(errorFunction) errorFunction.call();
+                else new Alert("error",  "Errore di connessione!", true, errorContainer);
+            })
+            .finally(function() {
+                if(finallyFunction) finallyFunction.call();
+            });
+
+        });
     }
+
+    static InsertRecord(fetchURL, fetchBody, errorFunction = null, errorContainer = null) {
+        errorContainer = (errorContainer) ? errorContainer :  document.querySelector(".alert-defaultContainer");   
+        return new Promise(resolve => {
+            fetch(fetchURL, { method: "POST", body: fetchBody})
+            .then(response => response.text())
+            .then(text => {
+                resolve(JSON.parse(text));
+            })
+            .catch(error => {
+                if(errorFunction) errorFunction.call();
+                else new Alert("error",  "Errore di connessione!", true, errorContainer);
+            });
+
+        });
+    }
+
+    static GetRecordFromPrimaryKey(tableName, primaryKey, errorContainer = null) {
+        errorContainer = (errorContainer) ? errorContainer :  document.querySelector(".alert-defaultContainer");   
+        const fetchURL = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=" + tableName; 
+        let toSend = new FormData();
+
+        toSend.append("primary-key", primaryKey);
+        
+        return new Promise(resolve => {
+            fetch(fetchURL, { method: "POST", body: toSend})
+            .then(response => response.text())
+            .then(text => {
+                resolve(JSON.parse(text));
+            })
+            .catch(error => {
+                new Alert("error",  "Errore di connessione!", true, errorContainer);
+            });
+
+        });
+    }
+
+    static ModifyRecord()
 }

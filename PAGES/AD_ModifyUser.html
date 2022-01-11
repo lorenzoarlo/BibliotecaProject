@@ -2,21 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../STYLES/main-style.css" />
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
-    <link rel="stylesheet" href="../STYLES/input-style.css" />
-    <link rel="stylesheet" href="../STYLES/Alert-style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
-    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="../SCRIPTS/Utilities.js"></script>
-    <script src="../SCRIPTS/Alert.js"></script>
+    <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
         let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
@@ -58,16 +45,16 @@
             txtCodiceTessera.value = OG_Record["record"]["codiceTessera"];
 
             let txtNomeUtente = document.querySelector("#txtNomeUtente");
-            txtNomeUtente.value = OG_Record["record"]["nome"];
+            txtNomeUtente.value = OG_Record["record"]["nomeUtente"];
 
             let txtCognomeUtente = document.querySelector("#txtCognomeUtente");
-            txtCognomeUtente.value = OG_Record["record"]["cognome"];
+            txtCognomeUtente.value = OG_Record["record"]["cognomeUtente"];
 
             let txtMail = document.querySelector("#txtMail");
-            txtMail.value = OG_Record["record"]["userMail"];
+            txtMail.value = OG_Record["record"]["mailUtente"];
 
             let txtDataRegistrazione = document.querySelector("#txtDataRegistrazione");
-            txtDataRegistrazione.value = OG_Record["record"]["dataRegistrazione"];
+            txtDataRegistrazione.value = OG_Record["record"]["dataRegistrazioneUtente"];
 
             let txtCodiceFiscale = document.querySelector("#txtCodiceFiscale");
             txtCodiceFiscale.value = OG_Record["record"]["codiceFiscale"];
@@ -86,7 +73,7 @@
             let cognomeUtente = document.querySelector("#txtCognomeUtente").value;
             let mailUtente = document.querySelector("#txtMail").value;
             
-            if(OG_Record["record"]["userMail"] == mailUtente && OG_Record["record"]["nome"] == nomeUtente  && OG_Record["record"]["cognome"] == cognomeUtente) {
+            if(OG_Record["record"]["mailUtente"] == mailUtente && OG_Record["record"]["nomeUtente"] == nomeUtente  && OG_Record["record"]["cognome"] == cognomeUtente) {
                 new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
                 return;
             }
@@ -98,9 +85,9 @@
             toSend.append("adminUsername", session["username"]);
             toSend.append("adminPassword", session["password"]);
             toSend.append("originalPK", OG_Record["record"]["codiceTessera"]);
-            if(OG_Record["record"]["userMail"] != mailUtente) toSend.append("userMail", mailUtente);
-            if(OG_Record["record"]["nome"] != nomeUtente) toSend.append("nomeUtente", nomeUtente);
-            if(OG_Record["record"]["cognome"] != cognomeUtente) toSend.append("cognomeUtente", cognomeUtente);
+            if(OG_Record["record"]["mailUtente"] != mailUtente) toSend.append("mailUtente", mailUtente);
+            if(OG_Record["record"]["nomeUtente"] != nomeUtente) toSend.append("nomeUtente", nomeUtente);
+            if(OG_Record["record"]["cognomeUtente"] != cognomeUtente) toSend.append("cognomeUtente", cognomeUtente);
 
             fetch(QUERY_PATH, { method: "POST", body: toSend })
             .then(response => response.text())
@@ -145,9 +132,8 @@
         read-only
         id="tableIDAmministratore">
             <database-column column-coding-name="idAmministratore" primary-key>ID AMMINISTRATORE</database-column>
-            <database-column column-coding-name="adminMail">E-MAIL</database-column>
+            <database-column column-coding-name="mailAmministratore">E-MAIL</database-column>
         </database-table>
-
         
         <button class="personalized-button red-button" onclick="">RIGENERA PASSWORD</button>
         <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button>

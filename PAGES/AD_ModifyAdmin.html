@@ -2,63 +2,37 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../STYLES/main-style.css" />
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
-    <link rel="stylesheet" href="../STYLES/input-style.css" />
-    <link rel="stylesheet" href="../STYLES/Alert-style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
-    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="../SCRIPTS/Utilities.js"></script>
-    <script src="../SCRIPTS/Alert.js"></script>
+    <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
-        let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
-        const OG_IDAmministratore = urlParams.get('idAmministratore');
+        const ORIGINAL_PK = urlParams.get('idAmministratore');
 
-        this.onload = function() {
-            alertContainer = document.querySelector(".default-container");
-            resetValues_txt();
+        async function resetFieldsValues() {
+            alertContainer = document.querySelector("alert-defaultContainer");
+
+            let response = await Utilities.GetRecordFromPrimaryKey("admins", ORIGINAL_PK);
+            if(!response["record"]) {
+                new Alert("error", "ID Amministratore non corretto!", true, alertContainer);
+                document.querySelectorAll("button").forEach(button => button.disabled = true);
+                return;
+            }
+
+            document.querySelector("#txtIDAmministratore").value = response["record"]["idAmministratore"];
+            document.querySelector("#txtMail").value = response["record"]["mailAmministratore"];
         }
 
-        function get_admin(primaryKey) {
-            return new Promise(resolve => {
-                const QUERY_PATH = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=admins";
-                let toSend = new FormData();
-                toSend.append("primaryKey", primaryKey);
 
-                fetch(QUERY_PATH, { method: "POST", body: toSend })
-                .then(response => response.text())
-                .then(function (response) {
-                    let output = JSON.parse(response);
-                    if(!output["record"]) {
-                        new Alert("error", "ID Amministratore non corretto!", true, alertContainer);
-                        document.querySelectorAll("button").forEach(button => button.disabled = true);
-                    }
-                    resolve(output);
-                })
-                .catch(error => {
-                    new Alert("error", "Errore di connessione!", true, alertContainer);
-                })
-            });
+        this.onload = () => resetFieldsValues();
+
+        function modifyRecord() {
+               
         }
 
-        async function resetValues_txt() {
-            const OG_Record = await get_admin(OG_IDAmministratore);
-            if(!OG_Record) return;
 
-            let txtIDAmministratore = document.querySelector("#txtIDAmministratore");
-            txtIDAmministratore.value = OG_Record["record"]["idAmministratore"];
 
-            let txtMail = document.querySelector("#txtMail");
-            txtMail.value = OG_Record["record"]["adminMail"];
-        }
+
+        
 
         async function modifyRecord() {
             const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=admins";
@@ -67,7 +41,7 @@
 
             let mail = document.querySelector("#txtMail").value;
 
-            if((OG_Record["record"]["adminMail"] == mail)) {
+            if((OG_Record["record"]["mailAmministratore"] == mail)) {
                 new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
                 return;
             }
@@ -79,7 +53,7 @@
             toSend.append("adminUsername", session["username"]);
             toSend.append("adminPassword", session["password"]);
             toSend.append("originalPK", OG_Record["record"]["idAmministratore"]);
-            if(OG_Record["record"]["adminMail"] != mail) toSend.append("adminMail", mail);
+            if(OG_Record["record"]["mailAmministratore"] != mail) toSend.append("mailAmministratore", mail);
 
             fetch(QUERY_PATH, { method: "POST", body: toSend })
             .then(response => response.text())
@@ -111,7 +85,7 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <section class="default-container">
+    <section class="default-container alert-defaultContainer">
         <span class="default-title">MODIFICA AMMINISTRATORE</span>
         <text-input type="text" placeholder="ID Amministratore" id="txtIDAmministratore" read-only></text-input>
         <text-input type="text" placeholder="E-Mail" id="txtMail" read-only></text-input>

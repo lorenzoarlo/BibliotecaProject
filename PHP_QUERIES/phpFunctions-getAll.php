@@ -75,144 +75,179 @@
     }
 
     function get_all_categories($connection, $searchString) {
-        $q = "SELECT categorie.codCategoria as codiceCategoria,
-        categorie.descrizione
+        $q = "SELECT categorie.codiceCategoria,
+        categorie.descrizioneCategoria
         FROM categorie
-        WHERE (UPPER(codCategoria) LIKE '$searchString') 
-        OR (UPPER(descrizione) LIKE '$searchString');";
+        WHERE (UPPER(codiceCategoria) LIKE '$searchString') 
+        OR (UPPER(descrizioneCategoria) LIKE '$searchString');";
 
         return $connection->query($q);
     }
 
     function get_all_authors($connection, $searchString) {
-        $q = "SELECT autori.codAutore as codiceAutore,
-        autori.nome, 
-        autori.cognome,
-        CONCAT(autori.nome, ' ', autori.cognome) as nomeCompleto
+        $q = "SELECT autori.codiceAutore,
+        autori.nomeAutore, 
+        autori.cognomeAutore,
+        CONCAT(autori.nomeAutore, ' ', autori.cognomeAutore) as nomeCompletoAutore
         FROM autori
-        WHERE (UPPER(codAutore) LIKE '$searchString') 
-        OR (UPPER(CONCAT(autori.nome, ' ', autori.cognome)) LIKE '$searchString');";
+        WHERE (UPPER(codiceAutore) LIKE '$searchString') 
+        OR (UPPER(CONCAT(nomeAutore, ' ', cognomeAutore)) LIKE '$searchString');";
 
         return $connection->query($q);
     }
 
     function get_all_books($connection, $searchString) {
-        $q = "SELECT libri.nInventario as numeroInventario, 
+        $q = "SELECT libri.numeroInventario, 
         libri.titolo, 
         libri.ISBN,
-        libri.nScaffale as numeroScaffale, 
-        libri.codCategoria, 
-        libri.codAutore,
-        categorie.descrizione as descrizioneCategoria, 
-        autori.nome, 
-        autori.cognome,
-        CONCAT(autori.nome, ' ', autori.cognome) as nomeCompletoAutore
-        FROM libri 
+        libri.numeroScaffale, 
+        libri.codiceCategoria, 
+        categorie.descrizioneCategoria, 
+        libri.codiceAutore,
+        autori.nomeAutore, 
+        autori.cognomeAutore,
+        CONCAT(nomeAutore, ' ', cognomeAutore) as nomeCompletoAutore
+        FROM libri
         NATURAL JOIN categorie 
         NATURAL JOIN autori
-        WHERE (CAST(nInventario as char) LIKE '$searchString') 
+        WHERE (CAST(numeroInventario as char) LIKE '$searchString') 
         OR (UPPER(titolo) LIKE '$searchString')
         OR (CAST(ISBN as char) LIKE '$searchString')
-        OR (UPPER(descrizione) LIKE '$searchString')
-        OR (UPPER(CONCAT(autori.nome, ' ', autori.cognome)) LIKE '$searchString')
-        OR (CAST(nScaffale as char) LIKE '$searchString');";
+        OR (CAST(numeroScaffale as char) LIKE '$searchString')
+        OR (UPPER(codiceCategoria) LIKE '$searchString')
+        OR (UPPER(descrizioneCategoria) LIKE '$searchString')
+        OR (UPPER(codiceAutore) LIKE '$searchString')
+        OR (UPPER(CONCAT(nomeAutore, ' ', cognomeAutore)) LIKE '$searchString');";
 
         return $connection->query($q);
     }
 
     function get_all_booksNotLoan($connection, $searchString) {
-        $q = "SELECT libri.nInventario as numeroInventario, 
+        $q = "SELECT libri.numeroInventario, 
         libri.titolo, 
         libri.ISBN,
-        libri.nScaffale as numeroScaffale, 
-        libri.codCategoria, 
-        libri.codAutore,
-        categorie.descrizione as descrizioneCategoria, 
-        autori.nome, 
-        autori.cognome,
-        CONCAT(autori.nome, ' ', autori.cognome) as nomeCompletoAutore
-        FROM libri 
+        libri.numeroScaffale, 
+        libri.codiceCategoria, 
+        categorie.descrizioneCategoria, 
+        libri.codiceAutore,
+        autori.nomeAutore, 
+        autori.cognomeAutore,
+        CONCAT(nomeAutore, ' ', cognomeAutore) as nomeCompletoAutore
+        FROM libri
         NATURAL JOIN categorie 
         NATURAL JOIN autori
         NATURAL LEFT JOIN prestiti
-        WHERE (prestiti.inizioPrestito IS NULL OR (prestiti.finePrestito IS NOT NULL)) AND 
-        ((CAST(nInventario as char) LIKE '$searchString') 
-        OR (UPPER(titolo) LIKE '$searchString')
+        WHERE (inizioPrestito IS NULL OR (finePrestito IS NOT NULL)) AND
+        (CAST(numeroInventario as char) LIKE '$searchString') AND
+        ((UPPER(titolo) LIKE '$searchString')
         OR (CAST(ISBN as char) LIKE '$searchString')
-        OR (UPPER(descrizione) LIKE '$searchString')
-        OR (UPPER(CONCAT(autori.nome, ' ', autori.cognome)) LIKE '$searchString')
-        OR (CAST(nScaffale as char) LIKE '$searchString'))
-        GROUP BY nInventario;";
+        OR (CAST(numeroScaffale as char) LIKE '$searchString')
+        OR (UPPER(codiceCategoria) LIKE '$searchString')
+        OR (UPPER(descrizioneCategoria) LIKE '$searchString')
+        OR (UPPER(codiceAutore) LIKE '$searchString')
+        OR (UPPER(CONCAT(nomeAutore, ' ', cognomeAutore)) LIKE '$searchString'))
+        GROUP BY numeroInventario DESC;";
 
         return $connection->query($q);
     }
 
-
     function get_all_admins($connection, $searchString) {
         $q = "SELECT amministratori.idAmministratore, 
-        amministratori.admin_mail as adminMail
+        amministratori.mailAmministratore
         FROM amministratori
-        WHERE (UPPER(admin_mail) LIKE '$searchString');";
+        WHERE (UPPER(mailAmministratore) LIKE '$searchString');";
 
         return $connection->query($q);
     }
 
     function get_all_users($connection, $searchString) {
-        $q = "SELECT utenti.codTessera as codiceTessera, 
-        utenti.nome, 
-        utenti.cognome, 
-        utenti.user_mail as userMail, 
-        utenti.codFiscale as codiceFiscale, 
-        utenti.dataRegistr as dataRegistrazione, 
-        utenti.idAmministratore, 
-        CONCAT(utenti.nome, ' ', utenti.cognome) as nomeCompleto
+        $q = "SELECT utenti.codiceTessera, 
+        utenti.nomeUtente, 
+        utenti.cognomeUtente, 
+        utenti.mailUtente, 
+        utenti.codiceFiscale, 
+        DATE_FORMAT(utenti.dataRegistrazioneUtente, '%d-%m-%Y') as dataRegistrazioneUtente, 
+        utenti.idAmministratore,
+        amministratori.mailAmministratore,
+        CONCAT(nomeUtente, ' ', cognomeUtente) as nomeCompletoUtente
         FROM utenti
-        WHERE (UPPER(codTessera) LIKE '$searchString') 
-        OR (UPPER(CONCAT(utenti.nome, ' ', utenti.cognome)) LIKE '$searchString')  
-        OR (UPPER(user_mail) LIKE '$searchString')
-        OR (UPPER(codFiscale) LIKE '$searchString');";
+        NATURAL JOIN amministratori
+        WHERE (UPPER(codiceTessera) LIKE '$searchString') 
+        OR (UPPER(CONCAT(nomeUtente, ' ', cognomeUtente)) LIKE '$searchString')
+        OR (UPPER(codiceFiscale) LIKE '$searchString')
+        OR (UPPER(DATE_FORMAT(dataRegistrazioneUtente, '%d-%m-%Y')) LIKE '$searchString')  
+        OR (UPPER(mailUtente) LIKE '$searchString')
+        OR (UPPER(mailAmministratore) LIKE '$searchString');";
 
         return $connection->query($q);
     }
 
     function get_all_usersNotLoan($connection, $searchString) {
-        $q = "SELECT utenti.codTessera as codiceTessera, 
-        utenti.nome, 
-        utenti.cognome, 
-        utenti.user_mail as userMail, 
-        utenti.codFiscale as codiceFiscale, 
-        utenti.dataRegistr as dataRegistrazione, 
-        utenti.idAmministratore, 
-        CONCAT(utenti.nome, ' ', utenti.cognome) as nomeCompleto
+        $q = "SELECT utenti.codiceTessera, 
+        utenti.nomeUtente, 
+        utenti.cognomeUtente, 
+        utenti.mailUtente, 
+        utenti.codiceFiscale, 
+        DATE_FORMAT(utenti.dataRegistrazioneUtente, '%d-%m-%Y') as dataRegistrazioneUtente, 
+        utenti.idAmministratore,
+        amministratori.mailAmministratore,
+        CONCAT(nomeUtente, ' ', cognomeUtente) as nomeCompletoUtente
         FROM utenti
+        NATURAL JOIN amministratori
         NATURAL LEFT JOIN prestiti
-        WHERE (prestiti.inizioPrestito IS NULL OR (prestiti.finePrestito IS NOT NULL)) AND
-        ((UPPER(codTessera) LIKE '$searchString') 
-        OR (UPPER(CONCAT(utenti.nome, ' ', utenti.cognome)) LIKE '$searchString')  
-        OR (UPPER(user_mail) LIKE '$searchString')
-        OR (UPPER(codFiscale) LIKE '$searchString'))
-        GROUP BY codTessera;";
+        WHERE (inizioPrestito IS NULL OR finePrestito IS NOT NULL) AND
+        ((UPPER(codiceTessera) LIKE '$searchString') 
+        OR (UPPER(CONCAT(nomeUtente, ' ', cognomeUtente)) LIKE '$searchString')
+        OR (UPPER(codiceFiscale) LIKE '$searchString')
+        OR (UPPER(DATE_FORMAT(dataRegistrazioneUtente, '%d-%m-%Y')) LIKE '$searchString')  
+        OR (UPPER(mailUtente) LIKE '$searchString')
+        OR (UPPER(mailAmministratore) LIKE '$searchString'))
+        GROUP BY codiceTessera DESC;";
         
         return $connection->query($q);
     }
 
     function get_all_loans($connection, $searchString) {
         $q = "SELECT prestiti.idPrestito, 
-        prestiti.codTessera as codiceTessera, 
-        prestiti.nInventario as numeroInventario,
+        prestiti.codiceTessera, 
+        utenti.nomeUtente, 
+        utenti.cognomeUtente, 
+        utenti.mailUtente, 
+        utenti.codiceFiscale, 
+        CONCAT(nomeUtente, ' ', cognomeUtente) as nomeCompletoUtente,
+        prestiti.numeroInventario,
+        libri.titolo,
+        libri.ISBN,
+        libri.numeroScaffale, 
+        libri.codiceCategoria, 
+        categorie.descrizioneCategoria, 
+        libri.codiceAutore,
+        autori.nomeAutore, 
+        autori.cognomeAutore,
+        CONCAT(nomeAutore, ' ', cognomeAutore) as nomeCompletoAutore,
         DATE_FORMAT(prestiti.inizioPrestito, '%d-%m-%Y') as inizioPrestito, 
         DATE_FORMAT(prestiti.finePrestito, '%d-%m-%Y') as finePrestito,
-        prestiti.classeAttuale,
-        CONCAT(utenti.nome, ' ', utenti.cognome) as nomeCompletoUtente, 
-        libri.titolo 
+        prestiti.classeAttuale
         FROM prestiti
         NATURAL JOIN libri
-        NATURAL JOIN utenti 
-        WHERE (UPPER(codTessera) LIKE '$searchString') 
-        OR (UPPER(CONCAT(utenti.nome, ' ', utenti.cognome)) LIKE '$searchString')
-        OR (DATE_FORMAT(prestiti.inizioPrestito, '%d-%m-%Y') LIKE '$searchString')
-        OR (DATE_FORMAT(prestiti.finePrestito, '%d-%m-%Y') LIKE '$searchString')
-        OR (UPPER(titolo) LIKE '$searchString');";
+        NATURAL JOIN utenti
+        NATURAL JOIN autori
+        NATURAL JOIN categorie
+        WHERE (UPPER(codiceTessera) LIKE '$searchString')
+        OR (UPPER(CONCAT(nomeUtente, ' ', cognomeUtente)) LIKE '$searchString')
+        OR (UPPER(mailUtente) LIKE '$searchString')
+        OR (UPPER(codiceFiscale) LIKE '$searchString')
+        OR (UPPER(mailUtente) LIKE '$searchString')
+        OR (UPPER(codiceFiscale) LIKE '$searchString')
+        OR (CAST(numeroInventario as char) LIKE '$searchString')
+        OR (UPPER(titolo) LIKE '$searchString')
+        OR (CAST(ISBN as char) LIKE '$searchString')
+        OR (CAST(numeroScaffale as char) LIKE '$searchString')
+        OR (UPPER(descrizioneCategoria) LIKE '$searchString')
+        OR (UPPER(CONCAT(nomeAutore, ' ', cognomeAutore)) LIKE '$searchString')
+        OR (DATE_FORMAT(inizioPrestito, '%d-%m-%Y') LIKE '$searchString')
+        OR (DATE_FORMAT(finePrestito, '%d-%m-%Y') LIKE '$searchString')
+        OR (UPPER(classeAttuale) LIKE '$searchString');";
 
         return $connection->query($q);
     }

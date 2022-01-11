@@ -53,10 +53,10 @@
             
             $nomeAutore = $_POST["nomeAutore"];
             $cognomeAutore = $_POST["cognomeAutore"];
-            $dataNascita = "";
-            $biografia = "";
+            $dataNascitaAutore = "";
+            $biografiaAutore = "";
             
-            $response["inserted"] = insert_author($connection, $codiceAutore, $nomeAutore, $cognomeAutore, $dataNascita, $biografia);
+            $response["inserted"] = insert_author($connection, $codiceAutore, $nomeAutore, $cognomeAutore, $dataNascitaAutore, $biografiaAutore);
             break;
         case "users":
             $nomeUtente = $_POST["nomeUtente"];
@@ -67,7 +67,7 @@
                 break;
             }
             
-            $codiceFiscale = $_POST["codiceFiscale"];
+            $codiceFiscale = $_POST["codiceFiscaleUtente"];
             if(exists_codiceFiscale($connection, $codiceFiscale)) {
                 $response["codiceFiscaleCollision"] = true;
                 break;
@@ -75,9 +75,9 @@
             
             $codiceTessera = generateCodiceTessera($connection, $mailUtente, $codiceFiscale);
             $passwordInChiaro = generateSecurePassword("brooopo");
-            $registrationDate = date("d-m-Y");
+            $dataRegistrazioneUtente = date("d-m-Y");
 
-            $response["inserted"] = insert_user($connection, $codiceTessera, $nomeUtente, $cognomeUtente, $mailUtente, $registrationDate, $codiceFiscale, $passwordInChiaro, $admin["idAmministratore"]);
+            $response["inserted"] = insert_user($connection, $codiceTessera, $nomeUtente, $cognomeUtente, $mailUtente, $dataRegistrazioneUtente, $codiceFiscale, $passwordInChiaro, $admin["idAmministratore"]);
             break;
         case "books":
             $numeroInventario = $_POST["numeroInventario"];
@@ -89,24 +89,24 @@
             
             $titolo = $_POST["titolo"];
             $ISBN = $_POST["ISBN"];
-            $editore = "";
+            $editore = $_POST["editore"];
             $numeroScaffale = $_POST["numeroScaffale"];
             $codiceCategoria = $_POST["codiceCategoria"];
             $codiceAutore = $_POST["codiceAutore"];
 
-            $response["inserted"] = insert_book($connection, $numeroInventario, $titolo, $editore, $ISBN, $numeroScaffale, $codiceCategoria, $codiceAutore);
+            $response["inserted"] = insert_book($connection, $numeroInventario, $titolo, $ISBN , $editore, $numeroScaffale, $codiceCategoria, $codiceAutore);
 
             break;
         case "admins":
-            $mailAdmin = $_POST["mailAdmin"];
-            if(exists_mail($connection, $mailAdmin)) {
+            $mailAmministratore = $_POST["mailAmministratore"];
+            if(exists_mail($connection, $mailAmministratore)) {
                 $response["mailCollision"] = true;
                 break;
             }
             
             $passwordInChiaro = generateSecurePassword("a");
 
-            $response["inserted"] = insert_admin($connection, $mailAdmin, $passwordInChiaro);
+            $response["inserted"] = insert_admin($connection, $mailAmministratore, $passwordInChiaro);
             break;
         case "loans":
             $codiceTessera = $_POST["codiceTessera"];
@@ -114,7 +114,7 @@
             $classeAttuale = $_POST["classeAttuale"];
             $inizioPrestito = date("d-m-Y");
 
-            $response["inserted"] = insert_loan($connection, $codiceTessera, $numeroInventario, $inizioPrestito ,$classeAttuale);
+            $response["inserted"] = insert_loan($connection, $codiceTessera, $numeroInventario, $inizioPrestito, $classeAttuale);
             break;
         default:
             break;
@@ -130,32 +130,39 @@
         return $connection->query($q);
     }
 
-    function insert_author($connection, $codiceAutore, $nomeAutore, $cognomeAutore, $dataNascita, $biografia) {
+    function insert_author($connection, $codiceAutore, $nomeAutore, $cognomeAutore, $dataNascitaAutore, $biografiaAutore) {
+        $dataNascitaAutore = ($dataNascitaAutore == "") ? "NULL" : "STR_TO_DATE('$dataNascitaAutore','%d-%m-%Y')";
+        $biografiaAutore = ($biografiaAutore == "") ? "NULL" : "'$biografiaAutore'";
+        
         $q = "INSERT INTO autori
-        VALUES ('$codiceAutore','$nomeAutore','$cognomeAutore', NULL, NULL);";
+        VALUES ('$codiceAutore','$nomeAutore','$cognomeAutore', $dataNascitaAutore, $biografiaAutore);";
         
         return $connection->query($q);
     }
 
-    function insert_user($connection, $codiceTessera, $nomeUtente, $cognomeUtente, $mailUtente, $registrationDate, $codiceFiscale, $passwordInChiaro, $idAmministratore) {
+    function insert_user($connection, $codiceTessera, $nomeUtente, $cognomeUtente, $mailUtente, $dataRegistrazioneUtente, $codiceFiscale, $passwordInChiaro, $idAmministratore) {
         $encryptedPassword = hash("sha256", $passwordInChiaro, false);
+
         $q = "INSERT INTO utenti
-        VALUES ('$codiceTessera','$nomeUtente','$cognomeUtente','$mailUtente',STR_TO_DATE('$registrationDate', '%d-%m-%Y'),'$codiceFiscale','$encryptedPassword',$idAmministratore,'$passwordInChiaro');";
+        VALUES ('$codiceTessera','$nomeUtente','$cognomeUtente','$mailUtente',STR_TO_DATE('$dataRegistrazioneUtente', '%d-%m-%Y'),'$codiceFiscale','$encryptedPassword',$idAmministratore,'$passwordInChiaro');";
         
         return $connection->query($q);
     }
 
-    function insert_admin($connection, $mailAdmin, $passwordInChiaro) {
+    function insert_admin($connection, $mailAmministratore, $passwordInChiaro) {
         $encryptedPassword = hash("sha256", $passwordInChiaro, false);
+
         $q = "INSERT INTO amministratori
-        VALUES (NULL,'$mailAdmin','$encryptedPassword','$passwordInChiaro');";
+        VALUES (NULL,'$mailAmministratore','$encryptedPassword','$passwordInChiaro');";
         
         return $connection->query($q);
     }
 
-    function insert_book($connection, $numeroInventario, $titolo, $ISBN, $numeroScaffale, $codiceCategoria, $codiceAutore) {
+    function insert_book($connection, $numeroInventario, $titolo, $ISBN, $editore, $numeroScaffale, $codiceCategoria, $codiceAutore) {
+        $editore = ($editore == "") ? "NULL" : "'$editore'";
+        
         $q = "INSERT INTO libri
-        VALUES ($numeroInventario,'$titolo',$ISBN,NULL,$numeroScaffale,'$codiceCategoria','$codiceAutore');";
+        VALUES ($numeroInventario,'$titolo',$ISBN, $editore, $numeroScaffale,'$codiceCategoria','$codiceAutore');";
         
         return $connection->query($q);
     }
@@ -163,7 +170,7 @@
     function insert_loan($connection, $codiceTessera, $numeroInventario, $inizioPrestito, $classeAttuale) {
         $classeAttuale = ($classeAttuale == "") ? "NULL" : "'$classeAttuale'";
         $q = "INSERT INTO prestiti
-        VALUES (NULL,'$codiceTessera',$numeroInventario,STR_TO_DATE('$inizioPrestito', '%d-%m-%Y'),NULL,$classeAttuale);";
+        VALUES (N$inizioPrestito', 'ULL,'$codiceTessera',$numeroInventario,STR_TO_DATE('%d-%m-%Y'),NULL,$classeAttuale);";
         
         return $connection->query($q);
     }

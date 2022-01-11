@@ -3,21 +3,8 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../STYLES/main-style.css" />
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
-    <link rel="stylesheet" href="../STYLES/input-style.css" />
-    <link rel="stylesheet" href="../STYLES/Alert-style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
-    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="../SCRIPTS/Utilities.js"></script>
-    <script src="../SCRIPTS/Alert.js"></script>
+    <script src="../SCRIPTS/IncludeFiles.js"></script>
     <title>Biblioteca I.T.T.S.</title>
 </head>
 <body>
@@ -31,7 +18,7 @@
         textbox-placeholder="Cerca in categorie"
         destinationURL="AD_ModifyCategory.html">
             <database-column column-coding-name="codiceCategoria" primary-key>CODICE CATEGORIA</database-column>
-            <database-column column-coding-name="descrizione">DESCRIZIONE</database-column>
+            <database-column column-coding-name="descrizioneCategoria">DESCRIZIONE</database-column>
         </database-table>
         <hr class="separation-line"/>
         <span class="default-title">ELENCO AUTORI</span>
@@ -39,7 +26,7 @@
         textbox-placeholder="Cerca in autori"
         destinationURL="AD_ModifyAuthor.html">
             <database-column column-coding-name="codiceAutore" primary-key>CODICE AUTORE</database-column>
-            <database-column column-coding-name="nomeCompleto">NOME</database-column>
+            <database-column column-coding-name="nomeCompletoAutore">NOME</database-column>
         </database-table>
         <hr class="separation-line"/>
         <span class="default-title">ELENCO UTENTI</span>
@@ -47,8 +34,8 @@
         textbox-placeholder="Cerca in utenti"
         destinationURL="AD_ModifyUser.html">
             <database-column column-coding-name="codiceTessera" primary-key>CODICE TESSERA</database-column>
-            <database-column column-coding-name="userMail">E-MAIL</database-column>
-            <database-column column-coding-name="nomeCompleto">NOME</database-column>
+            <database-column column-coding-name="mailUtente">E-MAIL</database-column>
+            <database-column column-coding-name="nomeCompletoUtente">NOME</database-column>
             <database-column column-coding-name="codiceFiscale">CODICE FISCALE</database-column>
         </database-table>
         <hr class="separation-line"/>
@@ -81,7 +68,7 @@
         textbox-placeholder="Cerca in amministratori"
         destinationURL="AD_ModifyAdmin.html">
             <database-column column-coding-name="idAmministratore" primary-key>ID AMMINISTRATORE</database-column>
-            <database-column column-coding-name="adminMail">E-MAIL</database-column>
+            <database-column column-coding-name="mailAmministratore">E-MAIL</database-column>
         </database-table>
     </section>
     

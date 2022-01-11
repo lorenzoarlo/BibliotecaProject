@@ -1,66 +1,66 @@
 <?php 
-    function exists_mail($connection, $mailValue) {
-        $qAdmin = "SELECT amministratori.admin_mail
+    function exists_mail($connection, $mail) {
+        $qAdmin = "SELECT amministratori.mailAmministratore
         FROM amministratori
-        WHERE admin_mail = '$mailValue';";
+        WHERE mailAmministratore = '$mail';";
 
         $result = $connection->query($qAdmin);
 
         if($result->num_rows > 0) return true;
 
-        $qUser = "SELECT utenti.user_mail
+        $qUser = "SELECT utenti.mailUtente
         FROM utenti
-        WHERE user_mail = '$mailValue';";
+        WHERE mailUtente = '$mail';";
 
         $result = $connection->query($qUser);
 
         return $result->num_rows > 0;
     }
 
-    function exists_codiceFiscale($connection, $valueCodiceFiscale) {
-        $qUser = "SELECT utenti.codFiscale
+    function exists_codiceFiscale($connection, $codiceFiscale) {
+        $qUser = "SELECT utenti.codiceFiscale
         FROM utenti
-        WHERE codFiscale = '$valueCodiceFiscale';";
+        WHERE codiceFiscale = '$codiceFiscale';";
 
         $result = $connection->query($qUser);
 
         return $result->num_rows > 0;
     }
 
-    function exists_codiceCategoria($connection, $valueCodiceCategoria) {
-        $q = "SELECT categorie.codCategoria
+    function exists_codiceCategoria($connection, $codiceCategoria) {
+        $q = "SELECT categorie.codiceCategoria
         FROM categorie
-        WHERE codCategoria = '$valueCodiceCategoria';";
+        WHERE codiceCategoria = '$codiceCategoria';";
 
         $result = $connection->query($q);
 
         return $result->num_rows > 0;
     }
 
-    function exists_descrizioneCategoria($connection, $valueDescrizioneCategoria) {
-        $q = "SELECT categorie.descrizione
+    function exists_descrizioneCategoria($connection, $descrizioneCategoria) {
+        $q = "SELECT categorie.descrizioneCategoria
         FROM categorie
-        WHERE descrizione = '$valueDescrizioneCategoria';";
+        WHERE descrizioneCategoria = '$descrizioneCategoria';";
 
         $result = $connection->query($q);
 
         return $result->num_rows > 0;
     }
 
-    function exists_codiceAutore($connection, $valueCodiceAutore) {
-        $q = "SELECT autori.codAutore
+    function exists_codiceAutore($connection, $codiceAutore) {
+        $q = "SELECT autori.codiceAutore
         FROM autori
-        WHERE codAutore = '$valueCodiceAutore';";
+        WHERE codiceAutore = '$codiceAutore';";
 
         $result = $connection->query($q);
 
         return $result->num_rows > 0;
     }
 
-    function exists_numeroInventario($connection, $valueNumeroInventario) {
-        $q = "SELECT libri.nInventario
+    function exists_numeroInventario($connection, $numeroInventario) {
+        $q = "SELECT libri.numeroInventario
         FROM libri
-        WHERE nInventario = $valueNumeroInventario;";
+        WHERE numeroInventario = $numeroInventario;";
 
         $result = $connection->query($q);
 

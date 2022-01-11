@@ -2,21 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../STYLES/main-style.css" />
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
-    <link rel="stylesheet" href="../STYLES/input-style.css" />
-    <link rel="stylesheet" href="../STYLES/Alert-style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
-    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="../SCRIPTS/Utilities.js"></script>
-    <script src="../SCRIPTS/Alert.js"></script>
+    <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
         let alertContainer;
         const urlParams = new URLSearchParams(this.location.search);
@@ -57,10 +44,10 @@
             txtCodiceAutore.value = OG_Record["record"]["codiceAutore"];
 
             let txtNomeAutore = document.querySelector("#txtNomeAutore");
-            txtNomeAutore.value = OG_Record["record"]["nome"];
+            txtNomeAutore.value = OG_Record["record"]["nomeAutore"];
 
             let txtCognomeAutore = document.querySelector("#txtCognomeAutore");
-            txtCognomeAutore.value = OG_Record["record"]["cognome"];
+            txtCognomeAutore.value = OG_Record["record"]["cognomeAutore"];
 
         }
 
@@ -73,7 +60,7 @@
             let nomeAutore = document.querySelector("#txtNomeAutore").value;
             let cognomeAutore = document.querySelector("#txtCognomeAutore").value;
 
-            if(OG_Record["record"]["codiceAutore"] == codiceAutore && OG_Record["record"]["nome"] == nomeAutore && OG_Record["record"]["cognome"] == cognomeAutore) {
+            if(OG_Record["record"]["codiceAutore"] == codiceAutore && OG_Record["record"]["nomeAutore"] == nomeAutore && OG_Record["record"]["cognomeAutore"] == cognomeAutore) {
                 new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
                 return;
             }
@@ -86,8 +73,8 @@
             toSend.append("adminPassword", session["password"]);
             toSend.append("originalPK", OG_Record["record"]["codiceAutore"]);
             if(OG_Record["record"]["codiceAutore"] != codiceAutore) toSend.append("codiceAutore", codiceAutore);
-            if(OG_Record["record"]["nome"] != nomeAutore) toSend.append("nomeAutore", nomeAutore);
-            if(OG_Record["record"]["cognome"] != cognomeAutore) toSend.append("cognomeAutore", cognomeAutore);
+            if(OG_Record["record"]["nomeAutore"] != nomeAutore) toSend.append("nomeAutore", nomeAutore);
+            if(OG_Record["record"]["cognomeAutore"] != cognomeAutore) toSend.append("cognomeAutore", cognomeAutore);
 
             fetch(QUERY_PATH, { method: "POST", body: toSend })
             .then(response => response.text())

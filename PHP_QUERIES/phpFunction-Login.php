@@ -6,8 +6,8 @@
     include("php-createConnectionDatabase.php");
     include("phpFunctions-Utilities.php");
 
-    $loginUsername = $_POST["username"];
-    $loginPassword = $_POST["password"];
+    $loginUsername = $_POST["loginUsername"];
+    $loginPassword = $_POST["loginPassword"];
 
     $response = array(
         "authentication" => false,
@@ -15,20 +15,20 @@
         "primary-key" => null
     );
     
-    $admin = loginAdmin($connection, $loginUsername, $loginPassword); 
-    if($admin) {
+    $amministratore = loginAdmin($connection, $loginUsername, $loginPassword); 
+    if($amministratore) {
         $response["authentication"] = true;
-        $response["primary-key"] = $admin["idAmministratore"];
-        $response["user-type"] = "admin";
+        $response["primary-key"] = $amministratore["idAmministratore"];
+        $response["user-type"] = "amministratore";
         echo json_encode($response);
         query_terminate($connection);
     }
 
-    $user = loginUser($connection, $loginUsername, $loginPassword); 
-    if($user) {
+    $utente = loginUser($connection, $loginUsername, $loginPassword); 
+    if($utente) {
         $response["authentication"] = true;
-        $response["primary-key"] = $user["codTessera"];
-        $response["user-type"] = "user";
+        $response["primary-key"] = $utente["codiceTessera"];
+        $response["user-type"] = "utente";
     }
 
     echo json_encode($response);

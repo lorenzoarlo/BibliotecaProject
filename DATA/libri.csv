@@ -1,4 +1,4 @@
-nInventario;titolo;ISBN;editore;nScaffale;codCategoria;codAutore
+numeroInventario;titolo;ISBN;editore;numeroScaffale;codiceCategoria;codiceAutore
 1;'Harry Potter e la pietra filosofale';8808920305;NULL;1;'101';'ROWL'
 2;'Uno studio in rosso';7828940305;NULL;1;'101';'DOY'
 3;'Harry Potter e il calice di fuoco';7828940305;NULL;1;'803';'ROWL'

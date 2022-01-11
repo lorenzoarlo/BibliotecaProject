@@ -1,4 +1,4 @@
-idPrestito;codTessera;nInventario;inizioPrestito;finePrestito;classeAttuale
+idPrestito;codiceTessera;numeroInventario;inizioPrestito;finePrestito;classeAttuale
 1;'a0000000';1;'16-03-2010';NULL;NULL
 2;'b0000000';2;'15-04-2011';'03-12-2021';NULL
 3;'c0000000';3;'14-05-2013';NULL;NULL

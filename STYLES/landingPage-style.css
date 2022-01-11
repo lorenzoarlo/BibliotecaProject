@@ -52,6 +52,7 @@ body {
   color: white;
   font-size: var(--quote-fontSize);
   font-family: var(--quote-fontFamily);
+  text-align: center;
 }
 
 /* ----- LOGIN FORM CONTAINER ----- */

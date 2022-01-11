@@ -1,4 +1,4 @@
-codAutore;nome;cognome;annoNascita;biografia
+codiceAutore;nomeAutore;cognomeAutore;annoNascitaAutore;biografiaAutore
 'LEOP';'Giacomo';'Leopardi';NULL;NULL
 'STO';'Bram';'Stoker';NULL;NULL
 'SMI';'Adam';'Smith';NULL;NULL

@@ -2,66 +2,48 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../STYLES/main-style.css" />
     <link rel="stylesheet" href="../STYLES/PersonalArea-style.css" />
-    <link rel="stylesheet" href="../STYLES/input-style.css" />
-    <link rel="stylesheet" href="../STYLES/Alert-style.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Dancing+Script" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Waiting+for+the+Sunrise" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" />
-    <link rel="icon" type="image/png" href="../MEDIA/site-icon.png"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="../SCRIPTS/Utilities.js"></script>
-    <script src="../SCRIPTS/Alert.js"></script>
+    <script src="../SCRIPTS/IncludeFiles.js"></script>
     <script type="text/javascript">
-
-        function insertRecord() {
+        async function insertBook() {
+            alertContainer = document.querySelector(".alert-defaultContainer");
             const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Insert.php?tableName=books";
 
             let numeroInventario = document.querySelector("#txtNumeroInventario").value; 
             let titolo = document.querySelector("#txtTitolo").value;
-            let ISBN = document.querySelector("#txtISBN").value
+            let ISBN = document.querySelector("#txtISBN").value;
+            // let editore = document.querySelector("#txtEditore").value;
             let numeroScaffale = document.querySelector("#txtNumeroScaffale").value;
             let codiceCategoria = document.querySelector("#tableCodiceCategoria").getRecordChecked();
             let codiceAutore = document.querySelector("#tableCodiceAutore").getRecordChecked();
             
             let session = Utilities.GetSession();
-
+            
             let toSend = new FormData();
-
             toSend.append("adminUsername", session["username"]);
             toSend.append("adminPassword", session["password"]);
             toSend.append("numeroInventario", numeroInventario);
             toSend.append("titolo", titolo);
             toSend.append("ISBN", ISBN);
+            // toSend.append("editore", editore);
             toSend.append("numeroScaffale", numeroScaffale);
             toSend.append("codiceCategoria", codiceCategoria);
             toSend.append("codiceAutore", codiceAutore);
 
-            let alertContainer = document.querySelector(".default-container");
-
-            fetch(QUERY_PATH, { method: "POST", body: toSend })
-            .then(response => response.text())
-            .then(function (response) {
-                let output = JSON.parse(response);
-                if(!output["authentication"]) {
+            let response = await Utilities.InsertRecord(QUERY_PATH, toSend);
+            
+            if(!response["authentication"]) {
                     new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
                     return;
-                }
+            }
 
-                if(output["numeroInventarioCollision"]) {
+            if(response["numeroInventarioCollision"]) {
                     new Alert("error", "Inserimento fallito, numero inventario già utilizzato!", true, alertContainer);
                     return;
-                }
+            }
 
-                new Alert((output["inserted"]) ? "success" : "error", (output["inserted"]) ? "Inserimento effettuato con successo" : "Inserimento fallito!", true, alertContainer);
-            });
+            new Alert((response["inserted"]) ? "success" : "error", (response["inserted"]) ? "Inserimento effettuato con successo" : "Inserimento fallito!", true, alertContainer);
         }
-        
     </script>
     <title>Biblioteca I.T.T.S.</title>
 </head>
@@ -70,26 +52,27 @@
         <span class="headbar-title">I.T.T.S. O. Belluzzi - L. da Vinci</span>
         <span class="headbar-subtitle">Area personale amministratore</span>
     </header>
-    <section class="default-container">
-        <span class="default-title">INSERIMENTO UTENTE</span>
+    <section class="default-container alert-defaultContainer">
+        <span class="default-title">INSERIMENTO LIBRO</span>
+
         <text-input type="text" placeholder="Numero inventario" id="txtNumeroInventario"></text-input>
         <text-input type="text" placeholder="Titolo" id="txtTitolo"></text-input>
         <text-input type="text" placeholder="ISBN" id="txtISBN"></text-input>
-        <!-- <text-input type="text" placeholder="Editore" id="txtEditore"></text-input> -->
+        <text-input type="text" placeholder="Editore" id="txtEditore" read-only></text-input>
         <text-input type="text" placeholder="Numero scaffale" id="txtNumeroScaffale"></text-input>
         <database-table table-name="categories"
         textbox-placeholder="Codice categoria"
         type="select"
         id="tableCodiceCategoria">
             <database-column column-coding-name="codiceCategoria" primary-key>CODICE CATEGORIA</database-column>
-            <database-column column-coding-name="descrizione">DESCRIZIONE</database-column>
+            <database-column column-coding-name="descrizioneCategoria">DESCRIZIONE</database-column>
         </database-table>
         <database-table table-name="authors" 
         textbox-placeholder="Codice autore"
         type="select"
         id="tableCodiceAutore">
             <database-column column-coding-name="codiceAutore" primary-key>CODICE AUTORE</database-column>
-            <database-column column-coding-name="nomeCompleto">NOME</database-column>
+            <database-column column-coding-name="nomeCompletoAutore">NOME</database-column>
         </database-table>
 
         <button class="personalized-button green-button" onclick="insertRecord()">INSERISCI</button>

@@ -1,14 +1,14 @@
 <?php
 
-    function loginAdmin($connection, $username, $visiblePassword) {
-        $password = hash("sha256", $visiblePassword, false);
+    function loginAdmin($connection, $username, $password) {
+        $encryptedPassword = hash("sha256", $password, false);
 
         $q = "SELECT amministratori.idAmministratore, 
-        amministratori.admin_mail, 
-        amministratori.admin_password 
+        amministratori.mailAmministratore, 
+        amministratori.passwordAmministratore 
         FROM amministratori 
-        WHERE admin_mail = '$username' 
-        AND admin_password = '$password';";
+        WHERE mailAmministratore = '$username' 
+        AND passwordAmministratore = '$encryptedPassword';";
         
         $result = $connection->query($q);
         
@@ -18,15 +18,15 @@
         return $output;
     }
 
-    function loginUser($connection, $username, $visiblePassword) {
-        $password = hash("sha256", $visiblePassword, false);
+    function loginUser($connection, $username, $password) {
+        $encryptedPassword = hash("sha256", $password, false);
         
-        $q = "SELECT utenti.codTessera,
-        utenti.user_mail,
-        utenti.user_password
+        $q = "SELECT utenti.codiceTessera,
+        utenti.mailUtente,
+        utenti.passwordUtente
         FROM utenti 
-        WHERE (user_mail = '$username' OR codTessera = '$username')
-        AND user_password = '$password';";
+        WHERE (mailUtente = '$username' OR codiceTessera = '$username')
+        AND passwordUtente = '$encryptedPassword';";
         
         $result = $connection->query($q);
         
@@ -36,49 +36,10 @@
         return $output;
     }
 
-        
+    // ----- GENERATE FUNCTIONS -----
 
-    // function addAdmin($connection, $username, $password) {
-    //     $password_encrypted = hash("sha256", $password, false);
-
-    //     $q = "INSERT INTO amministratori 
-    //     VALUES(NULL, '$username','$password_encrypted','$password');";
-
-    //     $connection->query($q);
-    // }
-
-    // function addUser($connection, $codTessera, $name, $surname, $mail, $date, $codiceFiscale, $password, $idAdmin) {
-    //     $password_encrypted = hash("sha256", $password, false);
-
-    //     $q = "INSERT INTO utenti
-    //     VALUES ('$codTessera','$name','$surname','$mail','STR_TO_DATE('$date', '%d-%m-%Y'),'$codiceFiscale','$password_encrypted','$idAdmin','$password');";
-
-    //     $connection->query($q);
-    // }
-
-    // function addCategory($connection, $codCategoria, $descrizione) {
-    //     $q = "INSERT INTO categorie
-    //     VALUES('$codCategoria', '$descrizione');";
-
-    //     $connection->query($q);
-    // }
-
-    // function addAuthor($connection, $codAutore, $name, $surname, $annoNascita, $biografia) {
-    //     $annoNascita = ($annoNascita == "") ? "NULL" : "$annoNascita";
-    //     $biografia = ($biografia == "") ? "NULL" : "'$biografia'";
-        
-    //     $q = "INSERT INTO autori
-    //     VALUES('$codAutore','$name','$surname',$annoNascita, $biografia);";
-
-    //     $connection->query($q);
-    // }
-
-    
-
-
-    // ----- GENERATE FUNCTIONS
-    function generateSecurePassword($name) {
-        return $name;
+    function generateSecurePassword($word) {
+        return $word;
     }
 
     function generateCodiceTessera($connection, $mail, $cf) {
@@ -88,9 +49,9 @@
         do {
             $toEncrypt = "$mail" . "$cf" . "$iterator";
             $encrypted = substr(hash("sha256", $toEncrypt, false), 0, 8);
-            $qUser = "SELECT utenti.codTessera
+            $qUser = "SELECT utenti.codiceTessera
         FROM utenti
-        WHERE codTessera = '$encrypted';";
+        WHERE codiceTessera = '$encrypted';";
             $result = $connection->query($qUser);
             $iterator++;
         }while($result->num_rows > 0);

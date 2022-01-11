@@ -43,67 +43,87 @@
     query_terminate($connection);
 
     function get_category($connection, $primaryKey) {
-        $q = "SELECT categorie.codCategoria as codiceCategoria,
-        categorie.descrizione
+        $q = "SELECT categorie.codiceCategoria,
+        categorie.descrizioneCategoria
         FROM categorie
-        WHERE codCategoria = '$primaryKey';";
+        WHERE codiceCategoria = '$primaryKey';";
 
         return $connection->query($q);
     }
 
     function get_author($connection, $primaryKey) {
-        $q = "SELECT autori.codAutore as codiceAutore,
-        autori.nome, 
-        autori.cognome,
-        CONCAT(autori.nome, ' ', autori.cognome) as nomeCompleto
+        $q = "SELECT autori.codiceAutore,
+        autori.nomeAutore, 
+        autori.cognomeAutore,
+        CONCAT(autori.nomeAutore, ' ', autori.cognomeAutore) as nomeCompletoAutore
         FROM autori
-        WHERE codAutore = '$primaryKey';";
+        WHERE codiceAutore = '$primaryKey';";
 
         return $connection->query($q);
     }
 
     function get_book($connection, $primaryKey) {
-        $q = "SELECT libri.nInventario as numeroInventario, 
+        $q = "SELECT libri.numeroInventario, 
         libri.titolo, 
         libri.ISBN,
-        libri.nScaffale as numeroScaffale, 
-        libri.codCategoria as codiceCategoria, 
-        libri.codAutore as codiceAutore,
-        categorie.descrizione as descrizioneCategoria, 
-        autori.nome, 
-        autori.cognome,
-        CONCAT(autori.nome, ' ', autori.cognome) as nomeCompletoAutore
+        libri.numeroScaffale, 
+        libri.codiceCategoria, 
+        categorie.descrizioneCategoria, 
+        libri.codiceAutore,
+        autori.nomeAutore, 
+        autori.cognomeAutore,
+        CONCAT(nomeAutore, ' ', cognomeAutore) as nomeCompletoAutore
         FROM libri
-        NATURAL JOIN categorie
+        NATURAL JOIN categorie 
         NATURAL JOIN autori
-        WHERE nInventario = $primaryKey;";
+        WHERE numeroInventario = $primaryKey;";
 
         return $connection->query($q);
     }
 
     function get_user($connection, $primaryKey) {
-        $q = "SELECT utenti.codTessera as codiceTessera, 
-        utenti.nome, 
-        utenti.cognome, 
-        utenti.user_mail as userMail, 
-        utenti.codFiscale as codiceFiscale, 
-        DATE_FORMAT(utenti.dataRegistr, '%d-%m-%Y') as dataRegistrazione, 
+        $q = "SELECT utenti.codiceTessera, 
+        utenti.nomeUtente, 
+        utenti.cognomeUtente, 
+        utenti.mailUtente, 
+        utenti.codiceFiscale, 
+        DATE_FORMAT(utenti.dataRegistrazioneUtente, '%d-%m-%Y') as dataRegistrazioneUtente, 
         utenti.idAmministratore,
-        CONCAT(utenti.nome, ' ', utenti.cognome) as nomeCompleto
+        amministratori.mailAmministratore,
+        CONCAT(nomeUtente, ' ', cognomeUtente) as nomeCompletoUtente
         FROM utenti
-        WHERE codTessera = '$primaryKey';";
+        NATURAL JOIN amministratori
+        WHERE codiceTessera = '$primaryKey';";
 
         return $connection->query($q);
     }
 
     function get_loan($connection, $primaryKey) {
         $q = "SELECT prestiti.idPrestito, 
-        prestiti.codTessera as codiceTessera, 
-        prestiti.nInventario as numeroInventario,
+        prestiti.codiceTessera, 
+        utenti.nomeUtente, 
+        utenti.cognomeUtente, 
+        utenti.mailUtente, 
+        utenti.codiceFiscale, 
+        CONCAT(nomeUtente, ' ', cognomeUtente) as nomeCompletoUtente,
+        prestiti.numeroInventario,
+        libri.titolo,
+        libri.ISBN,
+        libri.numeroScaffale, 
+        libri.codiceCategoria, 
+        categorie.descrizioneCategoria, 
+        libri.codiceAutore,
+        autori.nomeAutore, 
+        autori.cognomeAutore,
+        CONCAT(nomeAutore, ' ', cognomeAutore) as nomeCompletoAutore,
         DATE_FORMAT(prestiti.inizioPrestito, '%d-%m-%Y') as inizioPrestito, 
         DATE_FORMAT(prestiti.finePrestito, '%d-%m-%Y') as finePrestito,
         prestiti.classeAttuale
         FROM prestiti
+        NATURAL JOIN libri
+        NATURAL JOIN utenti
+        NATURAL JOIN autori
+        NATURAL JOIN categorie
         WHERE idPrestito = $primaryKey;";
 
         return $connection->query($q);
@@ -111,7 +131,7 @@
 
     function get_admin($connection, $primaryKey) {
         $q = "SELECT amministratori.idAmministratore, 
-        amministratori.admin_mail as adminMail
+        amministratori.mailAmministratore
         FROM amministratori
         WHERE idAmministratore = $primaryKey;";
 
