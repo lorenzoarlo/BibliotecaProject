@@ -67,14 +67,14 @@
                 break;
             }
             
-            $codiceFiscale = $_POST["codiceFiscaleUtente"];
+            $codiceFiscale = $_POST["codiceFiscale"];
             if(exists_codiceFiscale($connection, $codiceFiscale)) {
                 $response["codiceFiscaleCollision"] = true;
                 break;
             }
             
             $codiceTessera = generateCodiceTessera($connection, $mailUtente, $codiceFiscale);
-            $passwordInChiaro = generateSecurePassword("brooopo");
+            $passwordInChiaro = generateSecurePassword("bro");
             $dataRegistrazioneUtente = date("d-m-Y");
 
             $response["inserted"] = insert_user($connection, $codiceTessera, $nomeUtente, $cognomeUtente, $mailUtente, $dataRegistrazioneUtente, $codiceFiscale, $passwordInChiaro, $admin["idAmministratore"]);
@@ -170,7 +170,7 @@
     function insert_loan($connection, $codiceTessera, $numeroInventario, $inizioPrestito, $classeAttuale) {
         $classeAttuale = ($classeAttuale == "") ? "NULL" : "'$classeAttuale'";
         $q = "INSERT INTO prestiti
-        VALUES (N$inizioPrestito', 'ULL,'$codiceTessera',$numeroInventario,STR_TO_DATE('%d-%m-%Y'),NULL,$classeAttuale);";
+        VALUES (NULL,'$codiceTessera',$numeroInventario, STR_TO_DATE('$inizioPrestito','%d-%m-%Y'), NULL, $classeAttuale);";
         
         return $connection->query($q);
     }

@@ -25,56 +25,21 @@
 
         this.onload = () => resetFieldsValues();
 
-        function modifyRecord() {
-               
-        }
+        async function updateRecords() {
+            let fields = [];
 
+            let originalResponse = await Utilities.GetRecordFromPrimaryKey("admins", ORIGINAL_PK);
+            if(!originalResponse["record"]) return;
 
+            let mailAmministratore = document.querySelector("#txtMail").value;
 
-
-        
-
-        async function modifyRecord() {
-            const QUERY_PATH = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=admins";
-            const OG_Record = await get_admin(OG_IDAmministratore);
-            if(!OG_Record) return;
-
-            let mail = document.querySelector("#txtMail").value;
-
-            if((OG_Record["record"]["mailAmministratore"] == mail)) {
-                new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
-                return;
-            }
-
-            let session = Utilities.GetSession();
-
-            let toSend = new FormData();
-
-            toSend.append("adminUsername", session["username"]);
-            toSend.append("adminPassword", session["password"]);
-            toSend.append("originalPK", OG_Record["record"]["idAmministratore"]);
-            if(OG_Record["record"]["mailAmministratore"] != mail) toSend.append("mailAmministratore", mail);
-
-            fetch(QUERY_PATH, { method: "POST", body: toSend })
-            .then(response => response.text())
-            .then(function (response) {
-                console.log(response);
-                let output = JSON.parse(response);
-                if(!output["authentication"]) {
-                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
-                    return;
-                }
-
-                if(output["uniqueField-collision"]) {
-                    new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
-                    return;
-                }
-
-                if(output["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
+            if(originalResponse["record"]["mailAmministratore"] != mailAmministratore) fields.push({
+                name: "mailAmministratore",
+                value: mailAmministratore
             });
-        }
 
-        
+            Utilities.ModifyRecord("admins", ORIGINAL_PK, fields);
+        }
 
 
     </script>
@@ -88,11 +53,11 @@
     <section class="default-container alert-defaultContainer">
         <span class="default-title">MODIFICA AMMINISTRATORE</span>
         <text-input type="text" placeholder="ID Amministratore" id="txtIDAmministratore" read-only></text-input>
-        <text-input type="text" placeholder="E-Mail" id="txtMail" read-only></text-input>
+        <text-input type="text" placeholder="E-Mail" id="txtMail"></text-input>
 
         <!-- <button class="personalized-button red-button" onclick="">RIGENERA PASSWORD</button> -->
-        <!-- <button class="personalized-button orange-button" onclick="modifyRecord()">MODIFICA CAMPI</button> -->
-        <!-- <button class="personalized-button green-button" onclick="resetValues_txt()">RIPRISTINA AI VALORI INIZIALI</button> -->
+        <button class="personalized-button orange-button" onclick="updateRecords()">MODIFICA CAMPI</button>
+        <button class="personalized-button green-button" onclick="resetFieldsValues()">RIPRISTINA AI VALORI INIZIALI</button>
     </section>
     <script src="../SCRIPTS/TextInput.js"></script>
     <script src="../SCRIPTS/DatabaseTable.js"></script>

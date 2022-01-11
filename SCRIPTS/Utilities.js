@@ -62,7 +62,7 @@ class Utilities {
         const fetchURL = "../PHP_QUERIES/phpFunctions-getOne.php?tableName=" + tableName; 
         let toSend = new FormData();
 
-        toSend.append("primary-key", primaryKey);
+        toSend.append("primaryKey", primaryKey);
         
         return new Promise(resolve => {
             fetch(fetchURL, { method: "POST", body: toSend})
@@ -77,5 +77,53 @@ class Utilities {
         });
     }
 
-    static ModifyRecord()
+    static ModifyRecord(tableName, oldPK, fields, alertContainer = null) {
+        alertContainer = (alertContainer) ? alertContainer :  document.querySelector(".alert-defaultContainer");
+        const fetchURL = "../PHP_QUERIES/phpFunctions-Modify.php?tableName=" + tableName;
+
+        if(fields.length < 1) {
+            new Alert("warning", "Nessun campo è stato modificato!", true, alertContainer);
+            return;
+        }
+
+        let session = Utilities.GetSession();
+            
+        fields.push({
+            name: "adminUsername",
+            value: session["username"]
+        }, {
+            name: "adminPassword",
+            value: session["password"]
+        });
+
+        let toSend = new FormData();
+        toSend.append("originalPK", oldPK);
+        fields.forEach(field => {
+            toSend.append(field.name, field.value); 
+        });
+
+        return new Promise(resolve => {
+            fetch(fetchURL, { method: "POST", body: toSend})
+            .then(response => response.text())
+            .then(text => {
+                let response = JSON.parse(text);
+                if(!response["authentication"]) {
+                    new Alert("error", "Autenticazione amministratore fallita!", true, alertContainer);
+                    return;
+                }
+
+                if(response["uniqueField-collision"]) {
+                    new Alert("error", "Modifica fallita, collisione con campo univoco", true, alertContainer);
+                    return;
+                }
+
+                if(response["updated"]) new Alert("success", "Modifica effettuata con successo", true, alertContainer);
+            })
+            .catch(error => {
+                new Alert("error",  "Errore di connessione!", true, alertContainer);
+            });
+
+        });
+
+    }
 }
