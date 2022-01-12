@@ -16,7 +16,37 @@
             let numeroScaffale = document.querySelector("#txtNumeroScaffale").value;
             let codiceCategoria = document.querySelector("#tableCodiceCategoria").getRecordChecked();
             let codiceAutore = document.querySelector("#tableCodiceAutore").getRecordChecked();
+
+            if(titolo == "") {
+                new Alert("warning", "Titolo non inserito", true, alertContainer);
+                return;
+            }
+
+            if(ISBN == "") {
+                new Alert("warning", "ISBN non inserito", true, alertContainer);
+                return;
+            }
+
+            // if(editore == "") {
+            //     new Alert("warning", "Editore non inserito", true, alertContainer);
+            //     return;
+            // }
+
+            if(numeroScaffale == "") {
+                new Alert("warning", "ISBN non inserito", true, alertContainer);
+                return;
+            }
             
+            if(!codiceCategoria) {
+                new Alert("warning", "Codice categoria non inserito", true, alertContainer);
+                return;
+            }
+
+            if(!codiceAutore) {
+                new Alert("warning", "Codice autore non inserito", true, alertContainer);
+                return;
+            }
+
             let session = Utilities.GetSession();
             
             let toSend = new FormData();
@@ -26,6 +56,7 @@
             toSend.append("titolo", titolo);
             toSend.append("ISBN", ISBN);
             // toSend.append("editore", editore);
+            toSend.append("editore", "");
             toSend.append("numeroScaffale", numeroScaffale);
             toSend.append("codiceCategoria", codiceCategoria);
             toSend.append("codiceAutore", codiceAutore);
@@ -58,7 +89,7 @@
         <text-input type="text" placeholder="Numero inventario" id="txtNumeroInventario"></text-input>
         <text-input type="text" placeholder="Titolo" id="txtTitolo"></text-input>
         <text-input type="text" placeholder="ISBN" id="txtISBN"></text-input>
-        <text-input type="text" placeholder="Editore" id="txtEditore" read-only></text-input>
+        <!-- <text-input type="text" placeholder="Editore" id="txtEditore" read-only></text-input> -->
         <text-input type="text" placeholder="Numero scaffale" id="txtNumeroScaffale"></text-input>
         <database-table table-name="categories"
         textbox-placeholder="Codice categoria"
@@ -75,7 +106,7 @@
             <database-column column-coding-name="nomeCompletoAutore">NOME</database-column>
         </database-table>
 
-        <button class="personalized-button green-button" onclick="insertRecord()">INSERISCI</button>
+        <button class="personalized-button green-button" onclick="insertBook()">INSERISCI</button>
     </section>
     <script src="../SCRIPTS/TextInput.js"></script>
     <script src="../SCRIPTS/DatabaseTable.js"></script>

@@ -12,6 +12,16 @@
             let codiceCategoria = document.querySelector("#txtCodiceCategoria").value;
             let descrizioneCategoria = document.querySelector("#txtDescrizioneCategoria").value;
             
+            if(codiceCategoria == "") {
+                new Alert("warning", "Codice categoria non inserito", true, alertContainer);
+                return;
+            }
+
+            if(descrizioneCategoria == "") {
+                new Alert("warning", "Descrizione categoria non inserita", true, alertContainer);
+                return;
+            }
+
             let session = Utilities.GetSession();
             
             let toSend = new FormData();

@@ -13,6 +13,17 @@
             let codiceTessera = document.querySelector("#tableCodiceTessera").getRecordChecked();
             let numeroInventario = document.querySelector("#tableNInventario").getRecordChecked();
             
+            if(!codiceTessera) {
+                new Alert("warning", "Codice tessera non inserito", true, alertContainer);
+                return;
+            }
+
+            if(!numeroInventario) {
+                new Alert("warning", "Numero inventario non inserito", true, alertContainer);
+                return;
+            }
+
+
             let session = Utilities.GetSession();
             
             let toSend = new FormData();

@@ -14,6 +14,26 @@
             let mailUtente = document.querySelector("#txtMailUtente").value;
             let codiceFiscale = document.querySelector("#txtCodiceFiscale").value;
             
+            if(nomeUtente == "") {
+                new Alert("warning", "Nome utente non inserito", true, alertContainer);
+                return;
+            }
+
+            if(cognomeUtente == "") {
+                new Alert("warning", "Cognome utente non inserito", true, alertContainer);
+                return;
+            }
+
+            if(mailUtente == "") {
+                new Alert("warning", "Mail non inserita", true, alertContainer);
+                return;
+            }
+
+            if(codiceFiscale == "") {
+                new Alert("warning", "Codice fiscale non inserito", true, alertContainer);
+                return;
+            }
+
             let session = Utilities.GetSession();
             
             let toSend = new FormData();

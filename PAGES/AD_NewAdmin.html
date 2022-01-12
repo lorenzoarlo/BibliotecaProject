@@ -11,6 +11,12 @@
 
             let mailAmministratore = document.querySelector("#txtMailAmministratore").value;
             
+            if(mailAmministratore == "") {
+                new Alert("warning", "Mail non inserita", true, alertContainer);
+                return;
+            }
+
+
             let session = Utilities.GetSession();
             
             let toSend = new FormData();

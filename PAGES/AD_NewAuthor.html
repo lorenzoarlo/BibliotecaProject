@@ -13,6 +13,21 @@
             let nomeAutore = document.querySelector("#txtNomeAutore").value;
             let cognomeAutore = document.querySelector("#txtCognomeAutore").value; 
             
+            if(codiceAutore == "") {
+                new Alert("warning", "Codice autore non inserito", true, alertContainer);
+                return;
+            }
+
+            if(nomeAutore == "") {
+                new Alert("warning", "Nome autore non inserito", true, alertContainer);
+                return;
+            }
+            
+            if(cognomeAutore == "") {
+                new Alert("warning", "Cognome autore non inserito", true, alertContainer);
+                return;
+            }
+
             let session = Utilities.GetSession();
             
             let toSend = new FormData();

@@ -80,9 +80,9 @@
             $response["inserted"] = insert_user($connection, $codiceTessera, $nomeUtente, $cognomeUtente, $mailUtente, $dataRegistrazioneUtente, $codiceFiscale, $passwordInChiaro, $admin["idAmministratore"]);
             break;
         case "books":
-            $numeroInventario = $_POST["numeroInventario"];
+            $numeroInventario = $_POST['numeroInventario'];
             
-            if(exists_numeroInventario($connection, $numeroInventario)) {
+            if($numeroInventario != "" && exists_numeroInventario($connection, $numeroInventario)) {
                 $response["numeroInventarioCollision"] = true;
                 break;
             }
@@ -159,6 +159,7 @@
     }
 
     function insert_book($connection, $numeroInventario, $titolo, $ISBN, $editore, $numeroScaffale, $codiceCategoria, $codiceAutore) {
+        $numeroInventario = ($numeroInventario == "") ? "NULL" : "$numeroInventario";
         $editore = ($editore == "") ? "NULL" : "'$editore'";
         
         $q = "INSERT INTO libri
